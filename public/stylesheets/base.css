@@ -1,0 +1,70 @@
+body{
+  font-family: Arial, sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+  color:#333;
+  font-size: 12px;
+  border-top: 1px solid #dad9c7; 
+  border-bottom:1px solid #dad9c7; 
+}
+
+th.headerSortUp { 
+  background-image: url("/images/asc.gif") !important; 
+  background-color: #3399FF !important; 
+} 
+
+th.headerSortDown { 
+  background-image: url("/images/desc.gif") !important; 
+  background-color: #3399FF !important; 
+} 
+
+th { 
+  background-image: url("/images/small.gif");     
+  cursor: pointer; 
+  background-repeat: no-repeat; 
+  background-position: 0% 50%; 
+  padding-left: 16px; 
+}
+
+th, tfoot{
+  background-color: #CAE8EA;
+}
+
+th, td {
+  padding-top: 5px;
+  padding-bottom:5px;
+  border-right: 1px solid #dad9c7; 
+  border-left: 1px solid #dad9c7;
+}
+
+tr.odd{
+  background-color: #F5FAFA;
+}
+
+tr.even{
+  background-color: #FFFFFF;
+}
+
+form.sms_sending_form label{
+  margin-left:2px;
+  font-size: 0.8em;
+}
+
+form.sms_sending_form *{
+  display: block;
+}
+
+div#sms_sending_status {
+  font-size: 13px;
+  margin-left: 2px;
+}
+
+#sms_sending_error {
+  background-color: #FC7D6C;
+}
+
+#sms_sending_success {
+  background-color: #84F375;
+}

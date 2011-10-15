@@ -1,0 +1,14 @@
+<% content_for :head do %>
+  <title>Please Pick a Project to view</title>
+<% end %>
+
+<% content_for :body do %>
+  <h1><u>Projects to View</u></h1>
+  <br />
+  <% @projects.each do |p| %>
+    <%= link_to "#{p.name}", :action => 'project', :project_id => p.id %>
+    <br />
+  <% end %>
+  <br />
+<% end %>
+  

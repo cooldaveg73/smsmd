@@ -1,0 +1,15 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'scaffold' %>
+  <title><%= @title %></title>
+<% end %>
+
+<% content_for :body do %>
+  <br />
+  <br />
+
+  <%= render 'form' %>
+
+  <%= link_to 'Show', @user %> |
+  <%= link_to 'Back', users_path %>
+
+<% end %>

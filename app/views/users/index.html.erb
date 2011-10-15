@@ -1,0 +1,40 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'scaffold' %>
+  <%= javascript_include_tag 'jquery-1.6' %>
+  <%= javascript_include_tag 'delete_user_confirmer' %>
+  <title><%= @title %></title>
+<% end %>
+
+<% content_for :body do %>
+  <br />
+  <br />
+  <% if notice %>
+    <p id="notice"><%= notice %></p>
+  <% end %>
+
+  <table id="myTable">
+    <thead>
+      <tr>
+	<th>Name</th>
+	<th></th>
+	<th></th>
+	<th></th>
+      </tr>
+    </thead>
+
+  <% @users.each do |user| %>
+    <tr>
+      <td><%= user.name %></td>
+      <td><%= link_to 'Show', user %></td>
+      <td><%= link_to 'Edit', edit_user_path(user) %></td>
+      <td>
+        <a href="/users/destroy/<%= user.id %>" class="user_destroyer">Delete</a>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+
+  <br />
+
+  <%= link_to 'New User', new_user_path %>
+<% end %>

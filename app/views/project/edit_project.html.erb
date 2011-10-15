@@ -1,0 +1,21 @@
+<% content_for :body do %>
+  <br />
+  <br />
+  <%= form_for :project, :url => { :action => :create_project } do |f| %>
+  
+    <div class="field">
+      <%= f.label 'Project Name' %>
+      <%= f.text_field :name %>
+    </div>
+
+    <h3>Add Users</h3>
+    <% User.all.each do |user| %>
+      <div class="check_box_field">
+	<%= f.check_box "#{user.id}" %>
+        <%= f.label user.name %>
+      </div>
+    <% end %>
+  <br />
+  <%= f.submit "Create Project" %>
+  <% end %>
+<% end %>

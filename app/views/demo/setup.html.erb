@@ -1,0 +1,165 @@
+<% content_for :custom_scripts do %>
+  <%= stylesheet_link_tag 'demo_page.css' %>
+  <%= javascript_include_tag 'jquery-1.6.js' %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      var doctor_count = 6;
+      var vhd_count = 6;
+      var receiver_count = 6;
+      $('#doctor_add_button').click(function() {
+	$(this).parent().parent().parent().parent().parent().find('tbody').append('<tr><td>91&nbsp;<input type="text" size="15" name="doctors[doctor_' + doctor_count + ']" /><tr><td>');
+	doctor_count += 1;
+      });
+      $('#vhd_add_button').click(function() {
+	$(this).parent().parent().parent().parent().parent().find('tbody').append('<tr><td>91&nbsp;<input type="text" size="15" name="vhds[vhd_' + vhd_count + ']" /><tr><td>');
+	vhd_count += 1;
+      });
+      $('#receiver_add_button').click(function() {
+	$(this).parent().parent().parent().parent().parent().find('tbody').append('<tr><td>91&nbsp;<input type="text" size="15" name="receivers[receivers_' + receiver_count + ']" /><tr><td>');
+	receiver_count += 1;
+      });
+    });
+  </script>
+<% end %>
+
+<% content_for :body do %>
+  <br />
+
+  <%= form_tag :action => :destroy do %>
+    <%= submit_tag "Clear existing demo data" %>
+  <% end %>
+  <div class="explanation">
+    <h3>Explanation of Doctor Demo</h3>
+    <p>
+      1. All Doctor mobiles entered will receive the following SMS message:
+      <b>Reply ACC A to accept case: Anita Sondekar 23y Kokla yetoy 
+      5Day tap 2Day</b>.<br /> 
+      2. After that a doctor must send back <b>ACC A</b> in order to receive
+      <b>Thank you, Doctor. Please respond to the following case: 
+      Anita Sondekar 23y 9921433979 Kokla yetoy 5Day tap 2Day</b><br />
+      3. If they do not accept properly, the doctor will receive
+      <b>Sorry Doctor, which case did you want to accept? Your open cases: 
+      ACC A</b><br />
+      3. Once they have properly accepted the case, they can give their final
+      recommendation by starting with FIN or they can ask a question back.<br />
+      4. This message will be forwarded to anybody on the receivers list
+      ( if any ).
+    </p>
+  </div>
+
+  <div class="explanation">
+    <h3>Explanation of VHD Demo</h3>
+    <p>
+      1. All VHDs entered will be able to send in an REQ SMS to
+      <b><%= DEFAULT_SYSTEM_NUM %></b>.<br />
+      2. If the REQ SMS is wrong format, the VHD will receive a message
+      back that it was wrong format. <br />
+      3. If the message is correct format, the VHD will will receive as SMS:
+      <b>ACC - Dr. Karad 9011066359 Vadu</b> after 1 minute and <br />
+      <b>Fin tab pcm stat, cough syrup 1TSF stat, send patient to 
+      Vadu Hospital tomorrow</b> in expanded form after 2 additional minutes.
+    </p>
+  </div>
+  <div class="demo_row">
+    <h3>Input Doctors</h3>
+    <%= form_tag :action => :submit_doctors do %>
+      <table>
+      <% @project.doctors.each do |doctor| %>
+	<input type="checkbox" name=<%= "doctors[#{doctor.id}]" %>
+	  <%= 'checked="1"' if Demoer.find_by_mobile(doctor.mobile) %> />
+        <%= doctor.full_name %><br />
+      <% end %>
+      <h4>Please input mobile numbers for new doctors for the demo</h4>
+      <table>
+        <tbody>
+	  <% @doctor_demo_mobiles.each do |demo_mobile| %>
+	    <tr><td>
+	      91&nbsp;<%= text_field "doctors", "doctor_#{demo_mobile}",
+			  :size => 15, :value => demo_mobile %>
+	      <% if demo_mobile.length != 10 %>
+		<%= raw "<i>[mobile must be 10 digits]</i>" %>
+	      <% end %>
+	    </td></tr>
+	  <% end %>
+	  <% (1..5).each do |i| %>
+	    <tr><td>
+	      91&nbsp;<%= text_field "doctors", "doctor_#{i}", :size => 15 %>
+	    </td></tr>
+	  <% end %>
+	</tbody>
+	<tfoot>
+	  <tr><td>
+	   <center><a id="doctor_add_button">Add more fields</a></center>
+	  </td></tr>
+	</tfoot>
+      </table>
+      <br />
+      <%= submit_tag "Submit Doctor list and Page" %>
+    <% end %>
+  </div>
+  <div class="demo_row">
+    <h3>Input VHDs</h3>
+    <%= form_tag :action => :submit_vhds do %>
+      <table>
+      <% @project.vhds.each do |vhd| %>
+	<input type="checkbox" name=<%= "vhds[#{vhd.id}]" %>
+	  <%= 'checked="1"' if Demoer.find_by_mobile(vhd.mobile) %> />
+        <%= vhd.full_name %><br />
+      <% end %>
+      <h4>Please input mobile numbers for new vhds for the demo</h4>
+      <table>
+        <% @vhd_demo_mobiles.each do |demo_mobile| %>
+	  <tr><td>
+	    91&nbsp;<%= text_field "vhds", "vhd_#{demo_mobile}",
+	                :size => 15, :value => demo_mobile %>
+	    <% if demo_mobile.length != 10 %>
+	      <%= raw "<i>[mobile must be 10 digits]</i>" %>
+	    <% end %>
+          </td></tr>
+	<% end %>
+        <% (1..5).each do |i| %>
+	  <tr><td>
+	    91&nbsp;<%= text_field "vhds", "vhd_#{i}", :size => 15 %>
+	  </td></tr>
+	<% end %>
+	<tfoot>
+	  <tr><td>
+	    <center><a id="vhd_add_button">Add more fields</a></center>
+	  </td></tr>
+	</tfoot>
+      </table>
+      <br />
+      <%= submit_tag "Submit VHD list" %>
+    <% end %>
+  </div>
+  <div class="demo_row">
+    <h3>Input Receivers</h3>
+    <%= form_tag :action => :submit_receivers do %>
+      <h4>Please input mobile numbers for receivers for the demo</h4>
+      <table>
+	<% @receiver_demo_mobiles.each do |demo_mobile| %>
+	  <tr><td>
+	    91&nbsp;<%= text_field "receivers", "receiver_#{demo_mobile}",
+			:size => 15, :value => demo_mobile %>
+	    <% if demo_mobile.length != 10 %>
+	      <%= raw "<i>[mobile must be 10 digits]</i>" %>
+	    <% end %>
+	  </td></tr>
+	<% end %>
+        <% (1..5).each do |i| %>
+	  <tr><td>
+	    91&nbsp;<input name="receivers[receiver<%= "#{i}" %>]" size="15" type="text" /> 
+	  </td></tr>
+	<% end %>
+	<tfoot>
+	  <tr><td>
+	    <center><a id="receiver_add_button">Add more fields</a></center>
+	  </td></tr>
+	</tfoot>
+      </table>
+      <br />
+      <%= submit_tag "Submit Receiver list" %>
+    <% end %>
+  </div>
+
+<% end %>

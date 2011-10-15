@@ -1,0 +1,46 @@
+<% content_for :body do %>
+
+  <%= form_for :doctor, @doctor, :url => { :action => @action } do |f| %>
+    
+    <%= hidden_field_tag :id, @doctor.id %>
+    <%= hidden_field_tag :type, 'Doctor' %>
+
+    <div class="field">
+      <%= f.label 'First name' %><br />
+      <%= f.text_field :first_name %>
+    </div>
+
+    <div class="field">
+      <%= f.label 'Last name' %><br />
+      <%= f.text_field :last_name %>
+    </div>
+
+    <div class="field">
+      <%= f.label 'Phone number' %><br />
+      <%= f.text_field :mobile %>
+    </div>
+
+    <div class="field">
+      <%= f.label 'Hospital Name' %><br />
+      <%= f.text_field :hospital_id %>
+    </div>
+
+    <div class="field">
+      <%= f.label 'Specialty' %><br />
+      <%= f.text_field :specialty %>
+    </div>
+
+    <div class="field">
+      <strong>Default shift:</strong> any time that a VHD sends in a case.
+      <p><i> Please contact Mobilizing Health to change shift. </i></p>
+    </div>
+
+    <%= f.submit @submit %>
+  <% end %>
+
+  <%= form_tag :action => 'settings' do %>
+    <%= submit_tag "Undo Changes" %>
+  <% end %>
+
+<% end %>
+

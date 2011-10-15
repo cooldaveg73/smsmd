@@ -1,0 +1,21 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'scaffold' %>
+  <title>User Details - <%= @user.name %></title>
+<% end %>
+
+
+<% content_for :body do %>
+
+  <br />
+  <br />
+  <p id="notice"><%= notice %></p>
+
+  <p>
+    <b>Name:</b>
+    <%= @user.name %>
+  </p>
+
+  <%= link_to 'Edit', edit_user_path(@user) %> |
+  <%= link_to 'Back', users_path %>
+
+<% end %>

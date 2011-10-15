@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= @title || "Mobilizing Health" %></title>
+  <%= yield :head %>
+  <%= yield :custom_scripts %>
+  <%= csrf_meta_tag %>
+</head>
+<body>
+
+  <% unless (params[:controller] == "sessions") %>
+    <%= render 'layouts/header' %>
+  <% end %>
+
+  <% unless flash[:notice].nil? %>
+    <h2><%= flash[:notice] %></h2>
+  <% end %>
+
+  <%= yield :body %>
+  <%= debug(params) if Rails.env.development? %>
+  <%= debug(session) if Rails.env.development? %>
+
+</body>
+</html>

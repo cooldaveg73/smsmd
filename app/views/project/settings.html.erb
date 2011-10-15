@@ -1,0 +1,51 @@
+<% content_for :custom_scripts do %>
+  <%= stylesheet_link_tag 'base.css' %>
+  <%= stylesheet_link_tag 'tables.css' %>
+  <%= stylesheet_link_tag 'custom.css' %>
+<% end %>
+
+<% content_for :body do %>
+  <br />
+  <p><%= button_to ">>>>>   Demo   <<<<<", "/demo", :style => "margin-left: 100px;" %></p>
+  <br />
+  <% @data_type.each do |part| %>
+    <% type = part.delete_at(0) %>
+
+    <table class="horizontal">
+
+      <% if type == "VHD" || type == "Doctor" %>
+       <thead class="casesHead" id="cases"> <tr><th colspan="3"><%= type %> Name</th></tr></thead>
+	<tr><td colspan="3">
+	  <%= link_to "... Add #{type}", :action => 'new', :type => type %>
+	</td></tr>
+      <% else %>
+       <thead class="casesHead" id="cases"><tr><th><%= type %> Name</th></tr></thead>
+      <% end %>
+
+      <% part.each do |elem| %>
+	<tr>
+	  <% if type == "User" %>
+	    <td><%= elem.name %></td>
+	  <% else %>
+	    <td><%= [elem.first_name, elem.last_name].join(' ') %></td>
+	  <% end %>
+
+	  <% if @is_admin && type != "User" && type != "PM" && type != "APM" %>
+	    <td><%= link_to "Edit", :action => 'edit',
+	                     :type => type, :id => elem.id %></td>
+	    <td><%= link_to "Delete", :action => 'destroy', 
+			     :type => type, :id => elem.id %> </td>
+	  <% end %>
+	</tr>
+      <% end %>
+    </table>
+
+  <% end %>
+
+  <br style="clear:both;"/>
+  <br />
+  <br />
+  <% if @is_admin %>
+    <%= link_to "New Project", :action => :new_project %><br />
+  <% end %>
+<% end %>

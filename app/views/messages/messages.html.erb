@@ -1,0 +1,125 @@
+<% content_for :custom_scripts do %>
+  <% javascript_include_tag 'ajax_form_submitter' %>
+<% end %>
+
+<% content_for :body do %>
+  <br />
+  <br />
+  <div id="sms_sending_status">
+    <span id="sms_sending_success"></span>
+    <span id="sms_sending_error"></span>
+  </div>
+
+  <%= form_tag( {:controller => "messages", :action => "send_sms"}, 
+                {:method => "post", :class => "sms_sending_form"} ) do %>
+    <%= label_tag("Reply with a message") %>
+    <%= text_area_tag(:message, '', :size => '60x3', :id=>'sms_content') %>
+    <%= hidden_field_tag(:dest, @mobile, :id=>'sms_dest') %>
+    <%= submit_tag("Send SMS Now", :id => "sms_send_button") %>
+  <% end %>
+
+  <table id="myTable" class="tablesorter">
+    <thead>
+      <tr>
+	<th>Case</th>
+	<th>From Type</th>
+	<th>To Type</th>
+	<th>From Name</th>
+	<th>To Name</th>
+	<th>From Phone</th>
+	<th>To Phone</th>
+	<th>Timestamp</th>
+	<th>Message</th>
+	<th>Status</th>
+      </tr>
+    </thead>
+
+    <tfoot>
+      <tr>
+	<td>
+	  <%= link_to "<<", :controller => :messages, :action => :messages,
+			    :page => @prev_page, :cellphone => @mobile %>
+	</td>
+	<% 8.times do %> <td></td> <% end %>
+	<td>
+	  <%= link_to ">>", :controller => :messages, :action => :messages,
+			    :page => @next_page, :cellphone => @mobile %>
+	</td>
+      </tr>
+    </tfoot>
+
+    <tbody>
+      <% @messages.each do |m| %>
+	<tr class="<%= cycle('odd', 'even')%>">
+	  <% unless m.case.nil? %>
+	    <!-- Case -->
+	    <td>
+	      <%= link_to m.case.id, :controller => :cases, :action => :cases, 
+	                             :id => m.case.id %>
+	    </td>
+	  <% else %>
+	    <td>No Case</td>
+	  <% end %>
+
+	  <td><!-- From Type --><%= m.from_person_type.capitalize %></td>
+	  <td><!-- To Type --><%= m.to_person_type.capitalize %></td>
+
+	  <% from_person = m.from_doctor || m.from_vhd || 
+	                   m.from_patient || nil %>
+	  <% name = from_person.name if from_person %>
+	  <% name = m.from_person_type.capitalize unless from_person %>
+
+	  <!-- From Name -->
+	  <% unless name == "System" %>
+	    <td>
+	      <%= link_to name, :controller => :messages, :action => :messages, 
+	                        :cellphone => m.from_number%>
+	    </td>
+	  <% else %>
+	    <td><%= name %></td>
+	  <% end %>
+
+	  <% to_person = m.to_doctor || m.to_vhd || 
+	                   m.to_patient || m.to_pm || nil %>
+	  <% name = to_person.name if to_person %>
+	  <% name = m.to_person_type.capitalize unless to_person %>
+
+	  <!-- To Name -->
+	  <% unless name == "System" %>
+	    <td>
+	      <%= link_to name, :controller => :messages, :action => :messages, 
+	                        :cellphone => m.to_number%>
+	    </td>
+	  <% else %>
+	    <td><%= name %></td>
+	  <% end %>
+
+	  <!-- From Phone -->
+	  <td><%= m.from_number %></td>
+	  
+	  <!-- To Phone -->
+	  <td><%= m.to_number %></td>
+
+          <!-- Time Stamp -->
+	   <td>
+	     <% integer_time = m.time_received_or_sent.to_i %>
+	     <% time = Time.at(integer_time).in_time_zone(@timezone) %>
+	     <%= time.strftime("%d %b %Y\n%R") %>
+	   </td>
+
+	  <!-- Message -->
+	  <td><%= m.msg %></td>
+
+          <!-- Status -->
+	  <% if m.incoming? %>
+	    <td>Received</td>
+	  <% else %>
+	    <td><%= m.gateway_status || "Pending..." %></td>
+	  <% end %>
+
+	</tr>
+      <% end %>
+    </tbody>
+  </table>
+
+<% end %>

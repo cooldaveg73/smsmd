@@ -1,0 +1,80 @@
+<% content_for :body do %>
+
+  <%= form_for :vhd, @vhd, :url => { :action => @action } do |f| %>
+    
+    <%= hidden_field_tag :id, @vhd.id %>
+    <%= hidden_field_tag :type, "VHD" %>
+
+    <div class="field">
+      <%= f.label "First name" %><br />
+      <%= f.text_field :first_name %>
+    </div>
+
+    <div class="field">
+      <%= f.label "Last name" %><br />
+      <%= f.text_field :last_name %>
+    </div>
+
+    <div class="field">
+      <%= f.label "Phone number" %><br />
+      <%= f.text_field :mobile %>
+    </div>
+
+    <div class="field">
+      <%= f.label "Village name" %><br />
+      <%= f.text_field :village_id %>
+    </div>
+
+    <div class="field">
+      <label>PHC (enter id from below)</label><br />
+      <i>Please erase from this field before creating a new PHC</i><br />
+      <%= f.text_field :phc_id %>
+    </div>
+
+    <div class="PHC">
+      <h3><u>Nearest Health Center (or enter new PHC)</u></h3>
+      <%= text_field_tag :name %><%= label_tag "Name" %><br />
+      <%= text_field_tag :contact_name %><%= label_tag "Contact Name" %><br />
+      <%= text_field_tag :contact_number %><%= label_tag "Phone number" %><br />
+    </div>
+    
+    <%= f.submit @submit %>
+  <% end %>
+
+  <%= form_tag :action => :settings do %>
+    <%= submit_tag "Undo Changes" %>
+  <% end %>
+
+  <h2><u>Current PHCS in project</u></h2>
+  <% if @phcs.count == 0 %>
+    <h4>No PHCS in current project</h4>
+  <% end %>
+
+  <table>
+    <tr>
+      <% @phcs.each do |phc| %>
+	<td>ID (to enter above): <%= phc.id %></td>
+      <% end %>
+    </tr>
+      
+    <tr>
+      <% @phcs.each do |phc| %>
+	<td>Name of PHC: <%= phc.name %></td>
+      <% end %>
+    </tr>
+
+    <tr>
+      <% @phcs.each do |phc| %>
+	<td>Contact Name: <%= phc.contact_name %></td>
+      <% end %>
+    </tr>
+
+    <tr>
+      <% @phcs.each do |phc| %>
+	<td>Contact Number: <%= phc.contact_number %></td>
+      <% end %>
+    </tr>
+
+  </table>
+
+<% end %>

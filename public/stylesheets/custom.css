@@ -1,0 +1,41 @@
+/* Reporting Box Styles */
+
+.RepoBox table {
+  border-collapse:collapse;
+  margin-left: 10px;
+}
+
+/* Reporting Box Text Element formatting */
+.RepoBox td {
+  padding-left:1.5em;
+  padding-right:1.5em;
+  font-family: "Arial";
+  font-size: medium;
+  text-align: center;
+  text-decoration: "bold";
+}
+
+.repoBox {
+  margin-left: 10px;
+}
+
+
+.horizontal {
+  float: left;
+  margin-left: 40px;
+}
+
+.rowData {
+  text-align: center;
+}
+
+#left {
+  text-align: left;
+}
+
+#repoHeader {
+  text-align: left;
+  font-size: medium;
+  color: #000;
+  background: transparent; 
+}

@@ -1,0 +1,103 @@
+<% content_for :custom_scripts do %>
+  <%= stylesheet_link_tag 'base.css' %>
+  <%= stylesheet_link_tag 'tables.css' %>
+  <%= stylesheet_link_tag 'custom.css' %>
+<% end %>
+
+<% content_for :body do %>
+
+  <h3><center>
+    <%= link_to "<<", :action => :new, :time => @prev_time %> 
+    <%= @month_and_year_display %> 
+    <%= link_to ">>", :action => :new, :time => @next_time %>
+  </center></h3>
+
+  <center><%= @date_display %></center> 
+  <center><%= @time_display %></center>
+  <br />
+
+  <div class="RepoBox">
+  <table> 
+    <thead>
+    <tr>
+      <th></th>
+      <th>Average Number of Cases / day</th>
+      <th>Number of Fake SMS</th>
+      <th>Average Doctor Response (minutes)</th>
+    </tr>
+    <tr>
+      <th>From Today</th>
+      <td><%= @cases_today %></td>
+      <td><%= @fake_today %></td>
+      <td><%= @doc_response_today %></td>
+    </tr>
+    <tr>
+      <th>From This Week</th>
+      <td><%= @cases_per_day_week %></td> 
+      <td><%= @fake_week %></td> 
+      <td><%= @doc_response_week %></td> 
+    </tr>
+    <tr>
+      <th>From This Month</th>
+      <td><%= @cases_per_day_month %></td>
+      <td><%= @fake_month %></td>
+      <td><%= @doc_response_month %></td>
+    </tr>
+    <tr>
+      <th>Since the beginning</th>
+      <td><%= @cases_per_day_all %></td>
+      <td><%= @fake_all %></td>
+      <td><%= @doc_response_all %></td>
+    </tr>
+  </table>
+  </div>
+
+  <div class="repoBox">
+  <h5 id="repoHeader">Active Vhds</h5>
+  <table>
+    <thead>
+    <tr>
+      <th>Vhd Name</th>
+      <th>Project</th>
+      <th>Cases: This Month</th>
+      <th>SMS: This Month</th>
+      <th>Fake Cases: This Month</th>
+    </tr>
+    </thead>
+ 
+    <% @active_vhd_info.each do |vhd_data| %>
+      <tr class="rowData">
+	<td id="left"><%= vhd_data[:vhd].full_name %></td>
+	<td><%= vhd_data[:vhd].project.name %></td>
+	<td><%= vhd_data[:case_count] %></td>
+	<td><%= vhd_data[:message_count] %></td>
+	<td><%= vhd_data[:fake_message_count] %></td>
+      </tr>
+    <% end %>
+  </table>
+  </div>
+
+  <div class="repoBox">
+  <h5 id="repoHeader">Active Doctors</h5>
+  <table>
+    <thead>
+    <tr>
+      <th>Doctor Name</th>
+      <th>Number of ACC's</th>
+      <th>Number of Submitted</th>
+      <th>Number of FIN</th>
+      <th>Average Response Time</th>
+    </tr>
+    </thead>
+    <% @active_doctor_info.each do |doctor_data| %>
+      <tr class="rowData">
+	<td id="left"><%= doctor_data[:doctor].full_name %></td>
+	<td><%= doctor_data[:number_of_acc] %></td>
+	<td><%= doctor_data[:number_of_submitted] %></td>
+	<td><%= doctor_data[:number_of_fin] %></td>
+	<td><%= doctor_data[:average_response_time] || "-" %></td>
+      </tr>
+    <% end %>
+  </table>
+  </div>
+<% end %>

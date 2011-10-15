@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= @title || "Mobilizing Health" %></title>
+  <%= stylesheet_link_tag 'base' %>
+  <%= javascript_include_tag 'jquery-1.6' %>
+  <%= javascript_include_tag 'jquery.tablesorter' %>
+  <%= yield :custom_scripts %>
+  <script type="text/javascript">
+    $(document).ready(function() 
+      { 
+        $.tablesorter.addParser({
+          id: 'dates',
+          is: function(s){
+            return false;
+          },
+          format: function(s){
+            return Date.parse(s);
+          },
+          type: 'numeric'
+        });
+        $.tablesorter.addParser({
+          id: 'ids',
+          is: function(s){
+            return false;
+          },
+          format: function(s){
+            if(s && $.trim(s).toLowerCase() != "nil"){
+              return parseInt(s);
+            }else{
+              return 0;
+            }
+          },
+          type: 'numeric'
+        });
+        $.tablesorter.defaults.widgets = ['zebra'];
+        $("#myTable").tablesorter({ 
+            headers: { 
+                0: {
+                  sorter: 'ids'
+                },
+                7: { 
+                    sorter:'dates' 
+                } 
+            } 
+        }); 
+      } 
+    ); 
+  </script>
+  <%= csrf_meta_tag %>
+</head>
+<body>
+  <%= render 'layouts/header' %>
+  <%= yield :body %>
+  <%= debug(params) if Rails.env.development? %>
+  <%= debug(session) if Rails.env.development? %>
+</body>
+</html>

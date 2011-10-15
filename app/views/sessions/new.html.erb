@@ -1,0 +1,91 @@
+<% content_for :head do %>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Please Log In</title>
+  <%= stylesheet_link_tag 'admin' %>
+<% end %>
+
+<% content_for :body do %>
+
+    <div style="text-align: center; ">
+      <div style="margin-bottom: 0px; margin-left: auto; margin-right: auto; margin-top: 0px; overflow: hidden; position: relative; word-wrap: break-word;  background: rgb(255, 255, 255); text-align: left; width: 700px; " id="body_content">
+	<div style="margin-left: 0px; position: relative; width: 700px; z-index: 0; " id="nav_layer">
+          <div style="height: 0px; line-height: 0px; " class="bumper">
+	    &nbsp;
+	  </div>
+          <div style="height: 1px; line-height: 1px; " class="tinyText">
+	    &nbsp;
+	  </div>
+
+          <div class="com-apple-iweb-widget-navbar flowDefining" id="widget0" style="margin-left: 22px; margin-top: 150px; opacity: 1.00; position: relative; width: 655px; z-index: 1; ">
+            <div id="widget0-navbar" class="navbar">
+              <div id="widget0-bg" class="navbar-bg"></div>
+	    </div>
+          </div>
+
+          <div id="id1" style="height: 86px; left: 126px; position: absolute; top: 47px; width: 553px; z-index: 1; " class="style_SkipStroke shape-with-text">
+            <div class="text-content graphic_textbox_layout_style_default_External_553_86" style="padding: 0px; ">
+              <div class="graphic_textbox_layout_style_default">
+                <p style="padding-top: 0pt; " class="paragraph_style">
+		  M O B I L I Z I N G&nbsp; H E A L T H<br>
+		</p>
+                <p class="paragraph_style_1"><br></p>
+                <p style="padding-bottom: 0pt; " class="paragraph_style_1">Increasing Access to Rapid Health Information through Mobile Technology</p>
+              </div>
+            </div>
+          </div>
+          
+          <div style="height: 131px; width: 117px;  height: 130px; left: 1px; position: absolute; top: 21px; width: 117px; z-index: 1; " class="tinyText">
+            <div style="position: relative; width: 117px; ">
+              <img src="/images/logo.png" alt="" style="height: 131px; left: 0px; position: absolute; top: 0px; width: 117px; ">
+            </div>
+          </div>
+
+          <div style="height: 1px; width: 578px;  height: 1px; left: 114px; position: absolute; top: 142px; width: 578px; z-index: 1; " class="tinyText">
+            <div style="position: relative; width: 578px; ">
+              <img src="/images/green_separator.jpg" alt="" style="height: 1px; left: 0px; position: absolute; top: 0px; width: 578px; ">
+            </div>
+          </div>          
+          
+          <div style="clear: both; height: 0px; line-height: 0px; " class="spacer">
+	    &nbsp;
+	  </div>
+        </div>
+
+        <div style="float: left; height: 0px; line-height: 0px; margin-left: 0px; position: relative; width: 700px; z-index: 10; " id="header_layer">
+          <div style="height: 0px; line-height: 0px; " class="bumper">
+	    &nbsp;
+	  </div>
+        </div>  
+
+	<%= form_tag do %>
+	  <table>
+	    <tr>
+	      <% unless flash[:alert] %>
+		<td></td>
+		<td></td>
+	      <% else %>
+		<td colspan=2>
+		  <span style="color:#FF0000"><%= flash[:alert] %></span>
+		</td>
+	      <% end %>
+	    </tr>
+
+	    <tr>
+	      <td><label for="name">Username:</label></td>
+	      <td><%= text_field_tag :name, params[:name] %></td>
+	    </tr>
+	    
+	    <tr>
+	      <td><label for="password">Password:</label></td>
+	      <td><%= password_field_tag :password, params[:password] %></td>
+	    </tr>
+	    
+	    <tr>
+	      <td><%= submit_tag "Login" %></td>
+	      <td><div></div></td>
+	    </tr>
+
+	    </table>
+	<% end %>
+
+<% end %>

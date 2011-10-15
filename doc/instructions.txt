@@ -1,0 +1,67 @@
+From Aditya about setting up the database and deploying.
+
+
+
+Development:
+
+A. Set up local databases:
+1. Use Navicat Lite to create DB from mobilehealth.sql
+2. Copy smsmd from nathanfair.com
+
+smsmd file is in /var/www/mh1.0/smsmd
+
+B. hg clone - make sure to clone it anonymously
+
+C. rake db:migrate
+
+D. rails runner migratedata.rb - 5(?) mins`
+
+E. rails server (runs on port 3000)
+------------------------------------------------------------
+TODOs before first deploy:
+Steps B
+Change DB configuration
+Steps C, D from above
+Change timestamp for distinguishing between not delivered and unknown messages
+
+------------------------------------------------------------
+
+TODOs before every deploy:
+Make launch_2 in gateway.rb return self.launch
+
+------------------------------------------------------------
+
+Left to do before can deploy:
+
+Test cron job
+Test everything else
+
+Write crontab for the cron job that does this:
+* * * * * /var/www/mobilizing-health-rails/script/rails runner /var/www/mobilizing-health-rails/rails_cron.rb
+
+Start server with no hangups:
+Production:
+
+Starting:
+    rails server -d -e production -p 80
+Stopping:
+    First try:
+        ps -efwww | grep rails | grep server | awk '{print $2}' | xargs kill -2
+    Then do:
+        ps -efwww | grep rails | grep server | awk '{print $2}' | xargs kill -9
+
+------------------------------------------------------------
+Nice to have:
+
+Set admin status on user creation
+Link user to PM, Vhd, or Doctor
+
+Messages from people rather than system when sent through the system
+send_sms doesn't seem to be working with the before_filter enabled
+
+Text box to send SMS's on case details page
+Link back to cases page in admin view
+
+What if save! fails ?
+What if launch_2 fails?
+------------------------------------------------------------

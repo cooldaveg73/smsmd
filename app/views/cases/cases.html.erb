@@ -1,0 +1,102 @@
+<% content_for :custom_scripts do %>
+  <%= javascript_include_tag "rails.js" %>
+<% end %>
+
+<% content_for :body do %>
+  <br />
+  <br />
+  <table id="myTable" class="tablesorter">
+    <thead>
+      <tr>
+	<th>Case</th>
+	<th>From Type</th>
+	<th>To Type</th>
+	<th>From Name</th>
+	<th>To Name</th>
+	<th>Source Phone</th>
+	<th>Dest Phone</th>
+	<th>Timestamp</th>
+	<th>Message</th>
+	<th>Status</th>
+	<th>Mark Fake SMS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @messages.each do |m| %>
+	<tr class="<%= cycle('odd', 'even')%>">
+	  <% unless m.case.nil? %>
+	    <!-- Case -->
+	    <td>
+	      <%= link_to m.case.id, :controller => :cases, :action => :cases, 
+		  :id => m.case.id %>
+	    </td>
+	  <% else %>
+	    <td>No Case</td>
+	  <% end %>
+	  <!-- From Type -->
+	  <td>
+	    <%= m.from_person_type || 
+	        "System" if Project.find_by_mobile(m.from_number) ||
+		"Unknown" %></td>
+	  <!-- To Type -->
+	  <td><%= m.to_person_type || "" %></td>
+
+	  <!-- From Name -->
+	  <% if m.from_person %>
+	    <td>
+	      <%= link_to m.from_person.full_name, :controller => :messages, 
+	          :action => :messages, :mobile => m.from_number %>
+	    </td>
+	  <% elsif Project.find_by_mobile(m.from_number) %>
+	    <td><%= "System" %></td>
+	  <% else %>
+	    <td><%= "Unknown" %></td>
+	  <% end %>
+
+	  <!-- To Name -->
+	  <% if m.to_person %>
+	    <td>
+	      <%= link_to m.to_person.full_name, :controller => :messages,
+	          :action => :messages, :mobile => m.to_number %>
+	    </td>
+	  <% elsif Project.find_by_mobile(m.to_number) %>
+	    <td><%= "System" %></td>
+	  <% else %>
+	    <td><%= "Unknown" %></td>
+	  <% end %>
+	  <!-- From Phone -->
+	  <td><%= m.from_number %></td>
+	  <!-- To Phone -->
+	  <td><%= m.to_number %></td>
+          <!-- Time Stamp -->
+	   <td>
+	     <% integer_time = m.time_received_or_sent.to_i %>
+	     <% time = Time.at(integer_time).in_time_zone(@timezone) %>
+	     <%= time.strftime("%d %b %Y\n%R") %>
+	   </td>
+	  <!-- Message -->
+	  <td><%= m.msg %></td>
+          <!-- Status -->
+	  <% if m.incoming? %>
+	    <td>Received</td>
+	  <% else %>
+	    <td><%= m.gateway_status || "Pending..." %></td>
+	  <% end %>
+          <!-- Mark Fake SMS -->
+	  <% if !m.case.nil? && m == m.case.opening_message %>
+	    <td><center>
+	      <%= form_for :case, :url => { :action => :mark_fake }, 
+			          :remote => true do |f| %>
+		<%= hidden_field :case, :id, :value => m.case_id %>
+		<%= f.check_box 'fake', :checked => m.case.fake, 
+		                        :class => 'submittable' %>
+	      <% end %>
+	    </center></td>
+	  <% else %>
+	    <td></td>
+	  <% end %>
+	</tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
