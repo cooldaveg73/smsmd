@@ -32,11 +32,11 @@ class ReportingController < ApplicationController
     def get_doctor_info(doctor, time)
       beginning_of_month = Time.at(time).beginning_of_month.utc.to_datetime
       end_of_month = Time.at(time).end_of_month.utc.to_datetime
-      args = beginning_of_month, end_of_month
-      query = [ "from_doctor_id = ?", "time_received_or_sent > ?", 
-                "time_received_or_sent < ?" ].join(" AND ")
       num_acc = num_submitted = num_fin = 0
-      Message.where(query, doctor.id, *args).each do |message|
+      query = [ "from_person_id = ?", "from_person_type = ?", 
+	"time_received_or_sent BETWEEN ? and ?" ].join(" AND ")
+      args = beginning_of_month, end_of_month
+      Message.where(query, doctor.id, "Doctor", *args).each do |message|
         unless message.msg.nil?
 	  first_word = message.msg.strip.split(/\s+/).first
 	  if first_word.match(/acc/i)
@@ -48,9 +48,9 @@ class ReportingController < ApplicationController
 	  end
 	end
       end
-      query = ["time_opened > ?", "time_opened < ?", 'status = "resolved"',
-               "time_accepted IS NOT NULL",
-	       "time_closed_or_resolved IS NOT NULL" ].join(" AND ")
+      query = ["time_opened BETWEEN ? and ?", 'status = "resolved"',
+        "time_accepted IS NOT NULL", "time_closed_or_resolved IS NOT NULL" 
+	].join(" AND ")
       cases = doctor.cases.where(query, *args)
       sum = 0
       cases.each do |kase|
@@ -74,11 +74,11 @@ class ReportingController < ApplicationController
       beginning_of_month = Time.at(time).beginning_of_month.utc.to_datetime
       end_of_month = Time.at(time).end_of_month.utc.to_datetime
       args = beginning_of_month, end_of_month
-      query = "time_opened > ? AND time_opened < ?"
+      query = "time_opened BETWEEN ? and ?"
       cases_in_month = vhd.cases.where(query, *args)
-      query = [ "from_vhd_id = ?", "time_received_or_sent > ?", 
-                "time_received_or_sent < ?" ].join(" AND ")
-      messages_count = Message.where(query, vhd.id, *args).count
+      query = [ "from_person_id = ?", "from_person_type = ?", 
+        "time_received_or_sent BETWEEN ? and ?"].join(" AND ")
+      messages_count = Message.where(query, vhd.id, "Vhd", *args).count
       fake_messages_count = cases_in_month.where("fake = ?", true).count
 
       hsh =  { :vhd => vhd, :case_count => cases_in_month.count,
@@ -93,9 +93,9 @@ class ReportingController < ApplicationController
       beginning_of_month = Time.at(time).beginning_of_month.utc.to_datetime
       active_vhds = []
       @project.vhds.each do |vhd|
-        query = [ "from_vhd_id = ?", "time_received_or_sent > ?", 
-	          "time_received_or_sent < ?" ].join(" AND ")
-	args = vhd.id, beginning_of_month, end_of_month
+        query = [ "from_person_id = ?", "from_person_type = ?", 
+	  "time_received_or_sent BETWEEN ? and ?" ].join(" AND ")
+	args = vhd.id, "Vhd", beginning_of_month, end_of_month
         active_vhds << vhd if Message.where(query, *args).count > 0
       end
       return active_vhds
