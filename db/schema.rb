@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111022151006) do
+ActiveRecord::Schema.define(:version => 20111022155343) do
 
   create_table "apms", :force => true do |t|
     t.string   "first_name", :limit => 20
