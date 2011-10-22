@@ -27,12 +27,12 @@
       <tr>
 	<td>
 	  <%= link_to "<<", :controller => :cases, :action => :report,
-			    :page => @prev_page %>
+              :page => @prev_page %>
 	</td>
 	<% 9.times do %> <td></td> <% end %>
 	<td>
 	  <%= link_to ">>", :controller => :cases, :action => :report,
-			    :page => @next_page %>
+	      :page => @next_page %>
 	</td>
       </tr>
     </tfoot>
@@ -42,6 +42,7 @@
 
 	<tr class="<%= cycle('odd', 'even')%>">
 	  <% unless m.case_id.nil? %>
+
 	    <!-- Case -->
 	    <td>
 	      <%= link_to m.case_id.to_s, :controller => :cases, 
@@ -50,34 +51,33 @@
 	  <% else %>
 	    <td>No Case</td>
 	  <% end %>
-
-	  <td><!-- From Type --><%= m.from_person_type || "" %></td>
-	  <td><!-- To Type --><%= m.to_person_type || "" %></td>
-
-	  <% name = m.from_person.name if m.from_person %>
-	  <% name = m.from_person_type unless m.from_person %>
+	  <!-- From Type -->
+	  <td>
+	    <%= m.from_person_type || type_on_mobile(m.from_number) %>
+	  </td>
+	  <!-- To Type -->
+	  <td><%= m.to_person_type || type_on_mobile(m.to_number) %></td>
 
 	  <!-- From Name -->
-	  <% unless name.blank? %>
+	  <% if m.from_person %>
 	    <td>
-	      <%= link_to name, :controller => :messages, :action => :messages, 
-	          :cellphone => m.from_number%>
+	      <%= link_to m.from_person.full_name, :controller => :messages, 
+	          :action => :messages, :person_id => m.from_person.id, 
+		  :person_type => m.from_person.class.to_s %>
 	    </td>
 	  <% else %>
-	    <td><%= name %></td>
+	    <td><%= type_on_mobile(m.from_number) %></td>
 	  <% end %>
 
-	  <% name = m.to_person.name if m.to_person %>
-	  <% name = m.to_person_type unless m.to_person %>
-
 	  <!-- To Name -->
-	  <% unless name == "System" %>
+	  <% unless m.to_person.nil? %>
 	    <td>
-	      <%= link_to name, :controller => :messages, :action => :messages, 
-	                        :cellphone => m.to_number%>
+	      <%= link_to m.to_person.full_name, :controller => :messages, 
+	          :action => :messages, :person_id => m.to_person.id,
+		  :person_type => m.to_person.class.to_s %>
 	    </td>
 	  <% else %>
-	    <td><%= name %></td>
+	    <td><%= type_on_mobile(m.to_number)  %></td>
 	  <% end %>
 
 	  <!-- From Phone -->

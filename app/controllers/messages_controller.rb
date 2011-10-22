@@ -33,12 +33,14 @@ class MessagesController < ApplicationController
     @prev_page, @next_page = get_pages(current_page, per_page_count, total)
     @timezone = +5.5
     @title = "Messages: #{person.full_name}"
+    @mobile = person.mobile
     render :layout => "sortable_table"
   end
 
   def send_sms
     dest = params[:dest] || ""
     message = params[:message] || ""
+    project = get_project_and_set_subtitle
     message = message.strip()[0...160]
     sending_status = "Message could not be delivered to smsgupshup."
     sending_success = false
@@ -46,16 +48,17 @@ class MessagesController < ApplicationController
     if dest.match(/\d{10}/)
       sending_status = "Message successfully delivered."
       sending_success = true
+      send_info = { :msg => message, :project => project }
       vhd = Vhd.find_by_mobile(dest)
       unless vhd.nil?
-        if Message.send_to_vhd(vhd, message).external_id.nil?
+        if Message.send_to_person(vhd, send_info).external_id.nil?
 	  sending_status = "Message could not be delivered to Gateway."
 	  sending_success = false
 	end
       else
 	doctor = Doctor.find_by_mobile(dest)
 	unless doctor.nil?
-	  if Message.send_to_doctor(doctor, message).external_id.nil?
+	  if Message.send_to_person(doctor, send_info).external_id.nil?
 	    sending_status = "Message could not be delivered to Gateway."
 	    sending_success = false
 	  end

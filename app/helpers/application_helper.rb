@@ -14,4 +14,9 @@ module ApplicationHelper
     return prev_page, next_page
   end
 
+  def type_on_mobile(mobile)
+    return "System" if Project.find_by_mobile(mobile)
+    return "Unknown"
+  end
+
 end

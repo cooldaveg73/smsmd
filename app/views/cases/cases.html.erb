@@ -35,53 +35,56 @@
 	  <% end %>
 	  <!-- From Type -->
 	  <td>
-	    <%= m.from_person_type || 
-	        "System" if Project.find_by_mobile(m.from_number) ||
-		"Unknown" %></td>
+	    <%= m.from_person_type || type_on_mobile(m.from_number) %>
+	  </td>
 	  <!-- To Type -->
-	  <td><%= m.to_person_type || "" %></td>
+	  <td><%= m.to_person_type || type_on_mobile(m.to_number) %></td>
 
 	  <!-- From Name -->
 	  <% if m.from_person %>
 	    <td>
 	      <%= link_to m.from_person.full_name, :controller => :messages, 
-	          :action => :messages, :mobile => m.from_number %>
+	          :action => :messages, :person_id => m.from_person.id, 
+		  :person_type => m.from_person.class.to_s %>
 	    </td>
-	  <% elsif Project.find_by_mobile(m.from_number) %>
-	    <td><%= "System" %></td>
 	  <% else %>
-	    <td><%= "Unknown" %></td>
+	    <td><%= type_on_mobile(m.from_number) %></td>
 	  <% end %>
 
 	  <!-- To Name -->
-	  <% if m.to_person %>
+	  <% unless m.to_person.nil? %>
 	    <td>
-	      <%= link_to m.to_person.full_name, :controller => :messages,
-	          :action => :messages, :mobile => m.to_number %>
+	      <%= link_to m.to_person.full_name, :controller => :messages, 
+	          :action => :messages, :person_id => m.to_person.id,
+		  :person_type => m.to_person.class.to_s %>
 	    </td>
-	  <% elsif Project.find_by_mobile(m.to_number) %>
-	    <td><%= "System" %></td>
 	  <% else %>
-	    <td><%= "Unknown" %></td>
+	    <td><%= type_on_mobile(m.to_number)  %></td>
 	  <% end %>
+
 	  <!-- From Phone -->
 	  <td><%= m.from_number %></td>
+
 	  <!-- To Phone -->
 	  <td><%= m.to_number %></td>
+
           <!-- Time Stamp -->
 	   <td>
 	     <% integer_time = m.time_received_or_sent.to_i %>
 	     <% time = Time.at(integer_time).in_time_zone(@timezone) %>
 	     <%= time.strftime("%d %b %Y\n%R") %>
 	   </td>
+
 	  <!-- Message -->
 	  <td><%= m.msg %></td>
+
           <!-- Status -->
 	  <% if m.incoming? %>
 	    <td>Received</td>
 	  <% else %>
 	    <td><%= m.gateway_status || "Pending..." %></td>
 	  <% end %>
+
           <!-- Mark Fake SMS -->
 	  <% if !m.case.nil? && m == m.case.opening_message %>
 	    <td><center>
@@ -95,6 +98,7 @@
 	  <% else %>
 	    <td></td>
 	  <% end %>
+
 	</tr>
       <% end %>
     </tbody>
