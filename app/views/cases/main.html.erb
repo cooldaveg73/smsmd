@@ -35,14 +35,14 @@
     <tr>
       <td>
 	<%= link_to "<<", :controller => :cases, :action => :main,
-			  :page => @prev_page %>
+	    :page => @prev_page %>
       </td>
       <% 9.times do %>
 	<td></td>
       <% end %>
       <td>
 	<%= link_to ">>", :controller => :cases, :action => :main,
-			  :page => @next_page %>
+	    :page => @next_page %>
       </td>
     </tr>
   </tfoot>
@@ -55,7 +55,7 @@
     <!-- Case -->
     <td>
       <%= link_to kase.id, :controller => :cases, :action => :cases, 
-                           :id => kase.id%>
+          :id => kase.id%>
     </td>
     
     <!-- Finished -->
@@ -70,7 +70,8 @@
     <% unless kase.vhd.nil? %>
       <td>
         <%= link_to kase.vhd.name, :controller => :messages, 
-			:action => :messages, :cellphone => kase.vhd.mobile %>
+	    :action => :messages, :person_id => kase.vhd.id, 
+	    :person_type => "Vhd" %>
       </td>
     <% else %>
       <td></td>
@@ -88,9 +89,9 @@
 
     <!-- Doctor -->
     <% unless kase.doctor.nil? %>
-      <td><%= link_to "#{kase.doctor.first_name} #{kase.doctor.last_name}",
-            :controller => :messages, :action => :messages, 
-	    :cellphone => kase.doctor.mobile %></td>
+      <td><%= link_to kase.doctor.full_name, :controller => :messages, 
+              :action => :messages, :person_id => kase.doctor.id,
+	      :person_type => "Doctor" %></td>
     <% else %>
       <td></td>
     <% end %>
@@ -118,7 +119,7 @@
     <td><center>
       <% is_fake = kase.fake %>
       <%= form_for :case, :url => { :action => :mark_fake },
-	 	   :remote => true do |f| %>
+	  :remote => true do |f| %>
 	<%= hidden_field :case, :id, :value => kase.id %>
 	<%= f.check_box "fake", :checked => is_fake, :class => "submittable" %>
       <% end %>

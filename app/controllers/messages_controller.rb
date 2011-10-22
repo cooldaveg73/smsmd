@@ -2,31 +2,37 @@ class MessagesController < ApplicationController
   include MessagesHelper
 
   skip_before_filter :authorize,
-                     :only => [:sms_responder, :delivery_status, :send_sms]
+    :only => [:sms_responder, :delivery_status, :send_sms]
 
   def messages
-    redirect_to :root
-    return
-    @mobile = params[:mobile]
+    get_project_and_set_subtitle
     current_page = params[:page].to_i
-    person = person_on_phone_num(@mobile)
-    unless person.class == Pm
-      authorize_project(person.project)
-    else
-      if person.projects.count == 1
-        authorize_project(person.projects.first)
-      end
+    if params[:person_type].match(/doctor/i)
+      person = Doctor.find_by_id(params[:person_id])
+    elsif params[:person_type].match(/vhd/i)
+      person = Vhd.find_by_id(params[:person_id])
+    elsif params[:person_type].match(/pm/i)
+      person = Pm.find_by_id(params[:person_id])
     end
+    redirect_to :root && return if person.nil?
+    if person.respond_to?("project")
+      authorize_project(person.project)
+    elsif person.respond_to?("projects")
+      authorize_project(person.projects.first)
+    else
+      redirect_to :root && return
+    end
+
     per_page_count = 100
-    conditions = "from_number = :mobile OR to_number = :mobile"
-    data = { :mobile => @mobile }
+    query = "(from_person_id = :id AND from_person_type = :class) OR 
+      (to_person_id = :id AND to_person_type = :class)"
+    data = { :id => person.id, :class => person.class.to_s }
     begin_index = current_page * per_page_count
-    @messages = Message.where(conditions, data).order("id DESC").offset(begin_index).limit(per_page_count)
-    total = Message.where(conditions, data).count
+    @messages = Message.where(query, data).order("id DESC").offset(begin_index).limit(per_page_count)
+    total = Message.where(query, data).count
     @prev_page, @next_page = get_pages(current_page, per_page_count, total)
     @timezone = +5.5
-    @title = "Messages: #{person.name}"
-    @subtitle = "#{person.project.name} Project"
+    @title = "Messages: #{person.full_name}"
     render :layout => "sortable_table"
   end
 

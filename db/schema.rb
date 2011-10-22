@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111009201235) do
+ActiveRecord::Schema.define(:version => 20111022151006) do
 
   create_table "apms", :force => true do |t|
     t.string   "first_name", :limit => 20
@@ -126,7 +126,11 @@ ActiveRecord::Schema.define(:version => 20111009201235) do
   end
 
   add_index "messages", ["case_id"], :name => "index_messages_on_case_id"
+  add_index "messages", ["from_person_id"], :name => "index_messages_on_from_person_id"
+  add_index "messages", ["from_person_type"], :name => "index_messages_on_from_person_type"
   add_index "messages", ["project_id"], :name => "index_messages_on_project_id"
+  add_index "messages", ["to_person_id"], :name => "index_messages_on_to_person_id"
+  add_index "messages", ["to_person_type"], :name => "index_messages_on_to_person_type"
 
   create_table "notify_schemes", :force => true do |t|
     t.integer  "pm_id"
