@@ -8,39 +8,83 @@
   <br />
   <p><%= button_to ">>>>>   Demo   <<<<<", "/demo", :style => "margin-left: 100px;" %></p>
   <br />
-  <% @data_type.each do |part| %>
-    <% type = part.delete_at(0) %>
 
-    <table class="horizontal">
-
-      <% if type == "VHD" || type == "Doctor" %>
-       <thead class="casesHead" id="cases"> <tr><th colspan="3"><%= type %> Name</th></tr></thead>
-	<tr><td colspan="3">
-	  <%= link_to "... Add #{type}", :action => 'new', :type => type %>
-	</td></tr>
-      <% else %>
-       <thead class="casesHead" id="cases"><tr><th><%= type %> Name</th></tr></thead>
-      <% end %>
-
-      <% part.each do |elem| %>
+  <table class="horizontal">
+     <thead class="casesHead" id="cases">
+       <tr><th colspan="3">VHD Name</th></tr>
+     </thead>
+      <tr><td colspan="3">
+	<%= link_to "... Add VHD", :action => 'new', :type => "VHD" %>
+      </td></tr>
+    <% @vhds.each do |v| %>
 	<tr>
-	  <% if type == "User" %>
-	    <td><%= elem.name %></td>
-	  <% else %>
-	    <td><%= [elem.first_name, elem.last_name].join(' ') %></td>
-	  <% end %>
+	  <td>
+	    <%= link_to v.full_name, :controller => :messages,
+		:action => :messages, :person_id => v.id,
+		:person_type => v.class.to_s %>
+	  </td>
 
-	  <% if @is_admin && type != "User" && type != "PM" && type != "APM" %>
-	    <td><%= link_to "Edit", :action => 'edit',
-	                     :type => type, :id => elem.id %></td>
-	    <td><%= link_to "Delete", :action => 'destroy', 
-			     :type => type, :id => elem.id %> </td>
+	  <% if @is_admin %>
+	    <td><%= link_to "Edit", :action => 'edit', :type => "VHD", 
+	            :id => v.id %></td>
+	    <td><%= link_to "Delete", :action => 'destroy', :type => "VHD", 
+	            :id => v.id %> </td>
 	  <% end %>
 	</tr>
-      <% end %>
-    </table>
+    <% end %>
+  </table>
 
-  <% end %>
+
+  <table class="horizontal">
+     <thead class="casesHead" id="cases">
+       <tr><th colspan="3">Doctor Name</th></tr>
+     </thead>
+      <tr><td colspan="3">
+	<%= link_to "... Add Doctor", :action => 'new', :type => "Doctor" %>
+      </td></tr>
+    <% @doctors.each do |d| %>
+	<tr>
+	  <td>
+	    <%= link_to d.full_name, :controller => :messages,
+		:action => :messages, :person_id => d.id,
+		:person_type => d.class.to_s %>
+	  </td>
+
+	  <% if @is_admin %>
+	    <td><%= link_to "Edit", :action => 'edit', :type => "Doctor", 
+	            :id => d.id %></td>
+	    <td><%= link_to "Delete", :action => 'destroy', :type => "Doctor", 
+	            :id => d.id %> </td>
+	  <% end %>
+	</tr>
+    <% end %>
+  </table>
+
+
+  <table class="horizontal">
+     <thead class="casesHead" id="cases">
+       <tr><th colspan="3">PM Name</th></tr>
+     </thead>
+    <% @pms.each do |p| %>
+	<tr>
+	  <td>
+	    <%= link_to p.full_name, :controller => :messages,
+		:action => :messages, :person_id => p.id,
+		:person_type => p.class.to_s %>
+	  </td>
+	</tr>
+    <% end %>
+  </table>
+
+  <table class="horizontal">
+     <thead class="casesHead" id="cases">
+       <tr><th colspan="3">User Name</th></tr>
+     </thead>
+    <% @users.each do |u| %>
+	<tr><td><%= u.name %></td></tr>
+    <% end %>
+  </table>
+
 
   <br style="clear:both;"/>
   <br />

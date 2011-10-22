@@ -5,7 +5,7 @@ class MessagesController < ApplicationController
     :only => [:sms_responder, :delivery_status, :send_sms]
 
   def messages
-    get_project_and_set_subtitle
+    project = get_project_and_set_subtitle
     current_page = params[:page].to_i
     if params[:person_type].match(/doctor/i)
       person = Doctor.find_by_id(params[:person_id])
@@ -18,15 +18,16 @@ class MessagesController < ApplicationController
     if person.respond_to?("project")
       authorize_project(person.project)
     elsif person.respond_to?("projects")
-      authorize_project(person.projects.first)
+      redirect_to :root && return unless person.projects.include?(project)
     else
       redirect_to :root && return
     end
-
     per_page_count = 100
-    query = "(from_person_id = :id AND from_person_type = :class) OR 
-      (to_person_id = :id AND to_person_type = :class)"
-    data = { :id => person.id, :class => person.class.to_s }
+    query = "((from_person_id = :id AND from_person_type = :class) OR 
+      (to_person_id = :id AND to_person_type = :class)) 
+      AND project_id = :project_id"
+    data = { :id => person.id, :class => person.class.to_s, 
+      :project_id => project.id }
     begin_index = current_page * per_page_count
     @messages = Message.where(query, data).order("id DESC").offset(begin_index).limit(per_page_count)
     total = Message.where(query, data).count

@@ -5,15 +5,15 @@ class ProjectController < ApplicationController
     user = User.find_by_id(session[:user_id])
     get_title(project)
 
-    vhds = project.vhds
-    docs = project.doctors
-    pms = project.pms
-    users = project.users
-    apms = project.apms
+    @vhds = project.vhds
+    @doctors = project.doctors
+    @pms = project.pms
+    @users = project.users
+    @apms = project.apms
     @project = project
-    @data_type = [ vhds.insert(0, "VHD") , docs.insert(0, "Doctor"), 
-             pms.insert(0, "PM") , users.insert(0, "User"), 
-	     apms.insert(0, "APM") ]
+#    @data_type = [ vhds.insert(0, "VHD") , docs.insert(0, "Doctor"), 
+#             pms.insert(0, "PM") , users.insert(0, "User"), 
+#	     apms.insert(0, "APM") ]
 
     @is_admin = user.is_admin || false
   end
