@@ -10,7 +10,7 @@
 #  mobile     :string(20)
 #  created_at :datetime
 #  updated_at :datetime
-#  project_id :integer(4)
+#  registered :boolean(1)
 #
 
 class Patient < ActiveRecord::Base

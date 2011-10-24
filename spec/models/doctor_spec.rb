@@ -1,3 +1,24 @@
+# == Schema Information
+#
+# Table name: doctors
+#
+#  id               :integer(4)      not null, primary key
+#  first_name       :string(20)
+#  last_name        :string(20)
+#  mobile           :string(20)
+#  status           :string(10)
+#  last_paged       :datetime
+#  specialty        :string(20)
+#  hospital_id      :integer(4)
+#  active           :boolean(1)
+#  user_id          :integer(4)
+#  created_at       :datetime
+#  updated_at       :datetime
+#  project_id       :integer(4)
+#  points           :integer(4)      default(0)
+#  points_timestamp :datetime
+#
+
 require 'spec_helper'
 
 describe Doctor do

@@ -11,10 +11,10 @@
 #  include_doctor_name   :boolean(1)      default(TRUE)
 #  include_doctor_mobile :boolean(1)      default(TRUE)
 #  mobile                :string(24)      default("9223173098")
-#  unregistered_msg      :string(1024)
-#  close_msg             :string(1024)
-#  format_msg            :string(1024)
-#  timezone              :decimal(3, 1)
+#  unregistered_msg      :string(1024)    default("You have not been registered into the system. Please contact your hospital or project manager for registration.")
+#  close_msg             :string(1024)    default("Ye Case, Patient |PATIENT| ki liye, bund hogaya. Apko kisi karan is case ka jawab nahi mile aur abhi bhi jewab ke jerurat he tho dubara REQ ka sms kare.")
+#  req_format_msg        :string(1024)    default("Sorry, wrong format. Please re-send in this way: REQ (patient good name) (patient surname) (patient age (40y, A, C, I, E, P)) (patient mobile) (patient symptoms)")
+#  time_zone             :decimal(3, 1)
 #  location              :string(24)
 #
 
