@@ -67,6 +67,7 @@ class Project < ActiveRecord::Base
 	  if s.random_doctor
 	    saved_doctor_info = {}
 	    saved_doctors = []
+	    doctor = get_available_doctor
 	    while true
 	      saved_doctors << doctor
 	      saved_paged_time = doctor.last_paged
