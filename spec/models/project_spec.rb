@@ -64,7 +64,7 @@ describe Project do
 
     it "should return a nil doctor if there are no doctors" do
       kase = Factory(:newly_opened_case)
-      @project.get_doctors_to_page(kase).should be_nil
+      @project.get_doctors_to_page(kase).should == []
     end
 
     it "should use the scheme with priority 1 first" do
