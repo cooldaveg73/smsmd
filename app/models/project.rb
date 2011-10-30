@@ -63,6 +63,7 @@ class Project < ActiveRecord::Base
       doctors_to_page = []
       schemes.each do |s| 
 	doctor = s.get_doctor
+	return [] if doctor.nil? # temporary fix
 	if doctor.nil? || doctors_paged.include?(doctor)
 	  if s.random_doctor
 	    saved_doctor_info = {}

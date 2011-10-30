@@ -82,7 +82,7 @@ class Doctor < ActiveRecord::Base
 
   def pageable?
     ten_minutes_ago = DateTime.now.new_offset(0) - 10.minutes
-    return status == ("available" || "opened") && last_paged < ten_minutes_ago
+    return %w(available opened).include?(status) && last_paged < ten_minutes_ago
   end
 
   def page(kase)
