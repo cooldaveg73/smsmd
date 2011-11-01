@@ -21,7 +21,7 @@ class PagingScheme < ActiveRecord::Base
   default_scope :order => "paging_schemes.priority" 
 
   def get_doctor(doctors_paged=[])
-    if doctor.pageable?
+    if doctor.pageable? && !doctors_paged.include?(doctor)
       return doctor
     elsif random_doctor
       return project.get_available_doctor(doctors_paged)
