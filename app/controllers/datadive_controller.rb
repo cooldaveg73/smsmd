@@ -17,6 +17,18 @@ class DatadiveController < ApplicationController
     @words_monthly = word_list_from_word_freq(monthly_freq)
     @words_yearly = word_list_from_word_freq(yearly_freq)
     @words_trending = word_list_from_word_freq(freq_trend)
+    
+    @drug_data = drug_data_from_freqs(freq_trend, monthly_freq, yearly_freq)
+  end
+
+  def drug_data_from_freqs(freq_trend, monthly_freq, yearly_freq, max=50)
+    ignored = ignored_words
+    drug_data = []
+    #drug_data << ["all drugs", monthly_freq.values.sum, yearly_freq.values.sum, freq_trend.values.sum]
+    monthly_freq.each_pair do |word, freq|
+      drug_data << [word, freq, yearly_freq[word], freq_trend[word]] unless ignored.include? word
+    end
+    drug_data.sort_by{|x| -x[2].abs}[0..max]
   end
 
   def word_list_from_word_freq(word_freq, max=50)

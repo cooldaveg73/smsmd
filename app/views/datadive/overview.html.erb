@@ -10,25 +10,12 @@
   <h3><center>DataDive (SF 2011)
   </center></h3>
 
-  <p> Data Analysis from SF DataDive </p>
-  <div>
+  <p> Drug prescription trends</p>
   <table class='word_table'>
-    <%@words_monthly.each do |frequency, word|%>
-      <tr><td><%=word%></td><td><%=frequency%>%</td></tr>
-    <%end%>
-  <table class='word_table'>
-
-  <table>
-    <%@words_yearly.each do |frequency, word|%>
-      <tr><td><%=word%></td><td><%=frequency%>%</td></tr>
+    <tr><td>Drug</td><td>Yearly</td><td>Monthly</td><td>Trend</td></tr>
+    <%@drug_data.each do |word, monthly, yearly, trend|%>
+      <tr><td><%=word%></td><td><%="%.1f"%yearly%>%</td><td><%="%.1f"%monthly%>%<td class='<%= trend > 0 ? 'increasing' : 'decreasing' %> <%='bold' if trend.abs > 3.0%>'><%="%.1f"%trend%>%</td></tr>
     <%end%>
   </table>
-
-  <table class='word_table'>
-    <%@words_trending.each do |frequency_change, word|%>
-      <tr class='<%= frequency_change > 0 ? 'increasing' : 'decreasing' %>' ><td><%=word%></td><td><%=frequency_change%>%</td></tr>
-    <%end%>
-  </table>
-  </div>
 
 <% end %>
