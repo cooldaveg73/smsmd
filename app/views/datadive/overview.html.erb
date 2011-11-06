@@ -2,6 +2,7 @@
   <%= stylesheet_link_tag 'base.css' %>
   <%= stylesheet_link_tag 'tables.css' %>
   <%= stylesheet_link_tag 'custom.css' %>
+  <%= stylesheet_link_tag 'datadive.css' %>
 <% end %>
 
 <% content_for :body do %>
@@ -10,4 +11,24 @@
   </center></h3>
 
   <p> Data Analysis from SF DataDive </p>
+  <div>
+  <table class='word_table'>
+    <%@words_monthly.each do |frequency, word|%>
+      <tr><td><%=word%></td><td><%=frequency%>%</td></tr>
+    <%end%>
+  <table class='word_table'>
+
+  <table>
+    <%@words_yearly.each do |frequency, word|%>
+      <tr><td><%=word%></td><td><%=frequency%>%</td></tr>
+    <%end%>
+  </table>
+
+  <table class='word_table'>
+    <%@words_trending.each do |frequency_change, word|%>
+      <tr class='<%= frequency_change > 0 ? 'increasing' : 'decreasing' %>' ><td><%=word%></td><td><%=frequency_change%>%</td></tr>
+    <%end%>
+  </table>
+  </div>
+
 <% end %>

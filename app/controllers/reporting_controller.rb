@@ -1,6 +1,8 @@
 class ReportingController < ApplicationController
   include ReportingHelper
 
+  ignored_words = %w(1 2 3 4 5 6 7 8 9 10 acc and to me days at for)
+
   def new
     @project = get_project_and_set_subtitle
     time = parse_time(params[:time])
