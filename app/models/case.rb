@@ -154,17 +154,13 @@ class Case < ActiveRecord::Base
   end
 
   def send_close_message
-    close_message =     if messages.where("msg = ?", close_message).blank?
-      if project.vhd_based?
-        Message.send_to_vhd(vhd, close_message, self)
-      elsif project.patient_based?
-        Message.send_to_patient(patient, close_message, self)
-      end
+    close_message = project.close_msg.gsub("|PATIENT|", patient.name)
+    if messages.where("msg = ?", close_message).blank?
+      Message.send_to_person(vhd, {:msg => close_message, :case => self})
     end
   end
 
   def close
-    # DEFAULT_CLOSE_MSG.gsub("|PATIENT|", patient.name)
     unless doctor.nil? || doctor.status != "accepted"
       if doctor.current_case == (self || nil)
 	doctor.update_attributes(:status => "available")
