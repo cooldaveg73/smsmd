@@ -108,7 +108,7 @@ class Message < ActiveRecord::Base
       @port = '80'
       msg = URI.encode(msg)
       @post_ws = [ "/GatewayAPI/rest?v=1.1", "auth_scheme=PLAIN", 
-        "method=sendMessage", "userid=2000037632", "password=b1izpV9yI", 
+        "method=sendMessage", "userid=2000069911", "password=YQxgqTjFe", 
 	"send_to=#{dest}", "msg_type=Text", "msg=#{msg}", "mask=#{phonecode}"
 	].join("&")
 
