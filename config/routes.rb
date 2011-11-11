@@ -1,6 +1,7 @@
 Mh::Application.routes.draw do 
 
   match "/reporting", 	:to => "reporting#new"
+  match "/datadive",    :to => "datadive#overview"
 
   match "/logout", 		:to => "sessions#destroy"
   get "/login", 		:to => "sessions#new"

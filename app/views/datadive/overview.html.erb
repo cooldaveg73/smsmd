@@ -1,0 +1,27 @@
+<% content_for :custom_scripts do %>
+  <%= stylesheet_link_tag 'base.css' %>
+  <%= stylesheet_link_tag 'tables.css' %>
+  <%= stylesheet_link_tag 'custom.css' %>
+  <%= stylesheet_link_tag 'datadive.css' %>
+<% end %>
+
+<% content_for :body do %>
+
+  <h3><center>DataDive (SF 2011)
+  </center></h3>
+
+  <div style="float:right">
+  <img src='images/response_by_day.png' width=800 style="float:right">
+  <br style="clear:both">
+  <img src='images/response_by_time.png' width=800 style="float:right">
+  </div>
+
+  <p> Drug prescription trends</p>
+  <table class='word_table'>
+    <tr><td>Drug</td><td>Yearly</td><td>Monthly</td><td>Trend</td></tr>
+    <%@drug_data.each do |word, monthly, yearly, trend|%>
+      <tr><td><%=word%></td><td><%="%.1f"%yearly%>%</td><td><%="%.1f"%monthly%>%<td class='<%= trend > 0 ? 'increasing' : 'decreasing' %> <%='bold' if trend.abs > 3.0%>'><%="%.1f"%trend%>%</td></tr>
+    <%end%>
+  </table>
+
+<% end %>
