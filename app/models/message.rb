@@ -104,21 +104,19 @@ class Message < ActiveRecord::Base
       @user = '2000069911'
       @pass = 'YQxgqTjFe'
       @host = 'xxx.msg4all.com'
-
       @port = '80'
       msg = URI.encode(msg)
-      @post_ws = [ "/GatewayAPI/rest?v=1.1", "auth_scheme=PLAIN", 
-        "method=sendMessage", "userid=2000069911", "password=YQxgqTjFe", 
-	"send_to=#{dest}", "msg_type=Text", "msg=#{msg}", "mask=#{phonecode}"
-	].join("&")
 
-      @payload = { "v" => "1.1", "method" => "sendMessage", 
-        "auth_scheme" => "PLAIN", "userid" => "2000069911", 
-	"password" => "YQxgqTjFe", "msg" => msg, "msg_type" => "Text",
-	"send_to" => dest, "mask" => phonecode }
+      @post_ws = [ "/GatewayAPI/rest?method=sendMessage", 
+        "auth_scheme=PLAIN", "userid=#{@user}", "password=#{@pass}", 
+	"send_to=#{dest}", "msg=#{msg}" ].join("&")
 
-      req = Net::HTTP::Post.new(@post_ws, 
-        initheader = "Content-type" => "application/x-www-form-urlencoded", 
+      @payload = { "method" => "sendMessage", "auth_scheme" => "PLAIN",
+        "userid" => @user, "password" => @pass, "send_to" => dest, 
+	"msg" => msg }
+
+      req = Net::HTTP::Post.new(@post_ws,
+        initheader = "Content-type" => "application/x-www-form-urlencoded",
 	"Accept" => "text/plain")
       req.basic_auth @user, @pass
       req.body = @payload
