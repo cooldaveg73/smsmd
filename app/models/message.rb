@@ -79,6 +79,13 @@ class Message < ActiveRecord::Base
       m = send_info
       m[:to_number] = person.mobile if m[:to_number].nil? unless person.nil?
       m[:project] = m[:case].project if m[:project].nil? unless m[:case].nil?
+      if m[:project].nil?
+        if person.respond_to?("project")
+	  m[:project] = person.project
+	elsif person.respond_to?("projects") && person.projects.count == 1
+	  m[:project] = person.projects.first
+	end
+      end
       unless m[:project].nil?
 	m[:from_number] = m[:project].mobile if m[:from_number].nil?
       end
