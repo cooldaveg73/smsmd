@@ -85,7 +85,7 @@ class ProjectController < ApplicationController
     case(params[:type].to_s.upcase)
       when "VHD"
 	attr = { :status => "vacant", :project => project }
-	vhd = Vhd.create( params[:vhd].merge( attr ))
+	vhd = Vhd.create(params[:vhd].merge(attr))
 	if vhd.valid?
 	  @message = "New VHD #{vhd.name} saved!"
 	else
