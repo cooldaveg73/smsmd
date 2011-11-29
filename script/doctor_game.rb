@@ -19,17 +19,17 @@ default_stamp = Time.utc(2011, 8, 15, 3).to_datetime
 
 
 # Task: Generate the updated data for the message
-doctors = Project.find_by_name("Udaipur").doctors.where("active = ?", true)
+query = "status NOT IN ('deactivated','deleted')"
+doctors = Project.find_by_name("Udaipur").doctors.where(query)
 doctors.each do |doctor|
   doctor.points_timestamp = default_stamp if doctor.points_timestamp.nil?
   query = 'status = "resolved" AND time_accepted > ?', doctor.points_timestamp
-  patients_helped = doctor.cases.where( *query ).count
+  patients_helped = doctor.cases.where(*query).count
   @doctor_hash[doctor] = { :saved_timestamp => doctor.points_timestamp,
                            :saved_points => doctor.points, 
                            :patients_helped => patients_helped }
   query = "time_received_or_sent > ?", doctor.points_timestamp
-  messages = doctor.messages_as_from_doctor.where( *query )
-  messages.each do |message|
+  doctor.from_messages.where(*query).each do |message|
     message_words = message.msg.strip.split(/\s+/)
     if message_words[0].match(/acc/i)
       if message.case.nil? || message.case.status != "closed"
@@ -106,9 +106,9 @@ doctors.each do |doctor|
   doctor.reload
   if DateTime.now.new_offset(+5.5/24).hour >= 9
     if @doctor_hash[doctor][:patients_helped] == 0
-      Message.send_to_doctor(doctor, inactive_message(doctor))
+      Message.send_to_person(doctor, {:msg => inactive_message(doctor)})
     else
-      Message.send_to_doctor(doctor, active_message(doctor))
+      Message.send_to_person(doctor, {:msg => active_message(doctor)})
     end
   else
     sleep(200)
@@ -128,10 +128,11 @@ end
 		 	     @prize_descriptions[@prize_points[n]] + ".",
       "Please contact your local project manager to collect your prize." 
                             ].join(" ")
-      Message.send_to_doctor(doctor, message_for_doctor)
+      Message.send_to_person(doctor, {:msg => message_for_doctor})
       doctor.project.pms.each do |pm|
         message_for_pm = [ "**NOTE**", message_for_doctor ].join(" ")
-        Message.send_to_pm(pm, message_for_pm)
+	send_info = { :msg => message_for_pm, :project => doctor.project }
+        Message.send_to_person(pm, send_info)
       end
     end
   end
