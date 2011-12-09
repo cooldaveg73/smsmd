@@ -44,6 +44,7 @@ class FollowupController < ApplicationController
     @kase = Case.find_by_id(params[:id].to_i)
     @patient = Patient.find_by_id(@kase.patient_id)
     @followup = Followup.new
+    @cases = [Case.find_by_id(params[:id].to_i)]
      if params[:edit] == '1'
 	@patient.update_attributes(:first_name => params[:patient][:first_name].to_s)
 	@patient.update_attributes(:last_name => params[:patient][:last_name].to_s)
