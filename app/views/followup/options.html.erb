@@ -13,8 +13,10 @@
   <br />
   <br />
 
-  <% if !(@notice == nil)%>
+  <% if @notice.nil? %>
       <p>No results found.  Please try again.</p>
+  <% else %>
+    <p><%= @notice %></p>
   <% end %>
  <br />
 

@@ -10,11 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20111201084223) do
-=======
-ActiveRecord::Schema.define(:version => 20111128233158) do
->>>>>>> ab152fa30a9cd2ece7cc55c568ae7e154f768244
 
   create_table "apms", :force => true do |t|
     t.string   "first_name", :limit => 20
@@ -102,7 +98,7 @@ ActiveRecord::Schema.define(:version => 20111128233158) do
     t.boolean  "still_sick"
     t.boolean  "within_24_hours"
     t.boolean  "followed_advice"
-    t.string   "followed_advice_comments", :limit => 40
+    t.string   "followed_advice_comments", :limit => 20
     t.boolean  "would_use_again"
     t.string   "patient_work",             :limit => 20
     t.integer  "patient_family_size"
@@ -191,15 +187,6 @@ ActiveRecord::Schema.define(:version => 20111128233158) do
     t.datetime "updated_at"
   end
 
-  create_table "patient_actions", :force => true do |t|
-    t.string   "action",             :limit => 20
-    t.boolean  "doctor_recommended"
-    t.boolean  "patient_did"
-    t.integer  "case_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "patients", :force => true do |t|
     t.string   "first_name", :limit => 20
     t.string   "last_name",  :limit => 20
@@ -253,13 +240,6 @@ ActiveRecord::Schema.define(:version => 20111128233158) do
     t.integer  "end_minute"
     t.integer  "end_second"
     t.integer  "doctor_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "symptoms", :force => true do |t|
-    t.string   "name",       :limit => 20
-    t.integer  "case_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

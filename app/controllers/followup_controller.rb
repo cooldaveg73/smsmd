@@ -17,6 +17,7 @@ class FollowupController < ApplicationController
     elsif (params['start_date'] == nil)
 	redirect_to :action => 'options', :notice => "No Results Found"
     else
+      begin
 	sp = params['start_date']
 	start_date = DateTime.civil(sp['(1i)'].to_i, sp['(2i)'].to_i, sp['(3i)'].to_i, sp['(4i)'].to_i, 0, 0, 0)
 	ep = params['end_date']
@@ -30,6 +31,9 @@ class FollowupController < ApplicationController
 		cases = cases.slice(0..per_page_count -1)
 	end
 	@cases = cases
+      rescue
+	  redirect_to :action => 'options', :notice => "Invalid date entered"
+      end
         
     end
   end
