@@ -13,9 +13,7 @@
   <br />
   <br />
 
-  <% if @notice.nil? %>
-      <p>No results found.  Please try again.</p>
-  <% else %>
+  <% if @notice %>
     <p><%= @notice %></p>
   <% end %>
  <br />

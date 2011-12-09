@@ -15,7 +15,7 @@ class FollowupController < ApplicationController
     if !(params['caseform']== nil) && !(Case.find(:all, :conditions => { :id => params['caseform']['id'],:followed_up => nil, :status => 'resolved'}).size == 0)
 	@cases = [Case.find_by_id(params['caseform']['id'])]
     elsif (params['start_date'] == nil)
-	redirect_to :action => 'options', :notice => "No Results Found"
+	redirect_to :action => 'options', :notice => "No Results Found. Please try again."
     else
       begin
 	sp = params['start_date']
