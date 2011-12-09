@@ -43,49 +43,32 @@ class Project < ActiveRecord::Base
 
   def get_doctors_to_page(kase)
     available_schemes = paging_schemes - kase.paging_schemes
-    return [get_available_doctor] if available_schemes.blank?
+    if available_schemes.blank?
+      return [get_available_doctor(kase.doctors_paged)].compact
+    end
     priority = available_schemes.first.priority
     usable_schemes = available_schemes.select { |s| s.priority == priority }
-    return get_doctors_from_schemes(usable_schemes, kase.doctors_paged)
+    kase.paging_schemes += usable_schemes
+    return get_doctors_from_schemes(usable_schemes, kase.doctors_paged).compact
   end
 
-  def get_available_doctor
+  def get_available_doctor(doctors_paged=[])
     # return the doctor who was paged before any other doctor
-    doctors.where('status = "available"').order("last_paged").map do |d|
+    query = 'status = "available"'
+    available_doctors = doctors.where(query).order("last_paged")
+    (available_doctors - doctors_paged).map do |d|
       d if d.pageable?
     end.compact.first
   end
 
   private
 
-    # TODO: comment the **** out of this function
     def get_doctors_from_schemes(schemes, doctors_paged=[])
       doctors_to_page = []
       schemes.each do |s| 
-	doctor = s.get_doctor
-	if doctor.nil? || doctors_paged.include?(doctor)
-	  if s.random_doctor
-	    saved_doctor_info = {}
-	    saved_doctors = []
-	    while true
-	      saved_doctors << doctor
-	      saved_paged_time = doctor.last_paged
-	      saved_doctor_info[doctor.id] = { :last_paged => saved_paged_time }
-	      temp_paged_time = DateTime.now.new_offset(0)
-	      doctor.update_attributes(:last_paged => temp_paged_time)
-	      next_doctor = get_available_doctor
-	      break if next_doctor.nil? || saved_doctors.include?(next_doctor)
-	      unless doctors_paged.include?(next_doctor)
-		doctors_to_page << next_doctor
-		break
-	      end
-	      doctor = next_doctor
-	      # TODO: rescue that data
-	    end
-	  end
-	else
-	  doctors_to_page << doctor
-	end
+	doctor = s.get_doctor(doctors_paged)
+	doctors_to_page << doctor unless doctor.nil?
+	doctors_paged << doctor unless doctor.nil?
       end
       return doctors_to_page
     end

@@ -10,7 +10,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20111201084223) do
+=======
+ActiveRecord::Schema.define(:version => 20111128233158) do
+>>>>>>> ab152fa30a9cd2ece7cc55c568ae7e154f768244
 
   create_table "apms", :force => true do |t|
     t.string   "first_name", :limit => 20
@@ -76,7 +80,6 @@ ActiveRecord::Schema.define(:version => 20111201084223) do
     t.string   "first_name",       :limit => 20
     t.string   "last_name",        :limit => 20
     t.string   "mobile",           :limit => 20
-    t.string   "status",           :limit => 10
     t.datetime "last_paged"
     t.string   "specialty",        :limit => 20
     t.integer  "hospital_id"
@@ -87,6 +90,7 @@ ActiveRecord::Schema.define(:version => 20111201084223) do
     t.integer  "project_id"
     t.integer  "points",                         :default => 0
     t.datetime "points_timestamp"
+    t.string   "status",           :limit => 24
   end
 
   add_index "doctors", ["project_id"], :name => "index_doctors_on_project_id"

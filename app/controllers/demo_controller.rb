@@ -149,22 +149,22 @@ class DemoController < ApplicationController
     def fin_for_vhd(message_words)
       patient_name = [ message_words[1], message_words[2] ].join(" ")
       message = [ "Final recommendation for patient", patient_name, ":",
-                  Code.expand_fin(FIN_FOR_VHD), "Dr. ----", "<Hospial>",
-		  "9011066359" ].join(" ")
+	Code.expand(FIN_FOR_VHD), "Dr. ----", "<Hospial>", "9011066359" 
+	].join(" ")
       return message            
     end
 
     def scribed_for_receiver(message_words)
       message = [ "Recommendation for patient", "Anita", "Sondekar",
-		  Code.expand(message_words), ":", "Doctor ---", "9968686841",
-		  "<Hospital>" ].join(" ")
+	Code.expand(message_words.join(" ")), ":", "Doctor ---", "9968686841",
+	"<Hospital>" ].join(" ")
       return message
     end
 
     def fin_for_receiver(message_words)
       message = [ "Final recommendation for patient", "Anita", "Sondekar",
-		  Code.expand_fin(message_words), ":", "Doctor ---", 
-		  "9968686841", "<Hospital>" ].join(" ")
+	Code.expand(message_words.join(" ")), ":", "Doctor ---", "9968686841", 
+	"<Hospital>" ].join(" ")
       return message
     end
 

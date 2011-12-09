@@ -18,9 +18,9 @@ end
 forty_mins_ago = 40.minutes.ago.utc.to_datetime
 one_twenty_mins_ago = 120.minutes.ago.to_datetime
 cases_criteria = 'time_accepted < ? AND status IN ("accepted", "scribed")'
-Case.where(cases_criteria, one_twenty_mins_ago).each { |c| c.close }
 to_send_message_cases = Case.where(cases_criteria, forty_mins_ago)
 Case.where(cases_criteria, forty_mins_ago).each { |c| c.send_close_message }
+Case.where(cases_criteria, one_twenty_mins_ago).each { |c| c.close }
 
 # Task: make_doctors_available
 # has a safety check to make sure doctors last_paged 150 minutes ago are fixed

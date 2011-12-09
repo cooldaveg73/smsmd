@@ -79,6 +79,13 @@ class Message < ActiveRecord::Base
       m = send_info
       m[:to_number] = person.mobile if m[:to_number].nil? unless person.nil?
       m[:project] = m[:case].project if m[:project].nil? unless m[:case].nil?
+      if m[:project].nil?
+        if person.respond_to?("project")
+	  m[:project] = person.project
+	elsif person.respond_to?("projects") && person.projects.count == 1
+	  m[:project] = person.projects.first
+	end
+      end
       unless m[:project].nil?
 	m[:from_number] = m[:project].mobile if m[:from_number].nil?
       end
@@ -101,23 +108,22 @@ class Message < ActiveRecord::Base
 
     def self.send_msg(dest, msg, phonecode)
       # SMSGupShup definition v1.0 Copyright
-      @user = '2000037632'
-      @pass = 'b1izpV9yI'
-      @host = 'enterprise.smsgupshup.com'
+      @user = '2000069911'
+      @pass = 'YQxgqTjFe'
+      @host = 'xxx.msg4all.com'
       @port = '80'
       msg = URI.encode(msg)
-      @post_ws = [ "/GatewayAPI/rest?v=1.1", "auth_scheme=PLAIN", 
-        "method=sendMessage", "userid=2000037632", "password=b1izpV9yI", 
-	"send_to=#{dest}", "msg_type=Text", "msg=#{msg}", "mask=#{phonecode}"
-	].join("&")
 
-      @payload = { "v" => "1.1", "method" => "sendMessage", 
-        "auth_scheme" => "PLAIN", "userid" => "2000037632", 
-	"password" => "b1izpV9yI", "msg" => msg, "msg_type" => "Text",
-	"send_to" => dest, "mask" => phonecode }
+      @post_ws = [ "/GatewayAPI/rest?method=sendMessage", 
+        "auth_scheme=PLAIN", "userid=#{@user}", "password=#{@pass}", 
+	"send_to=#{dest}", "msg=#{msg}" ].join("&")
 
-      req = Net::HTTP::Post.new(@post_ws, 
-        initheader = "Content-type" => "application/x-www-form-urlencoded", 
+      @payload = { "method" => "sendMessage", "auth_scheme" => "PLAIN",
+        "userid" => @user, "password" => @pass, "send_to" => dest, 
+	"msg" => msg }
+
+      req = Net::HTTP::Post.new(@post_ws,
+        initheader = "Content-type" => "application/x-www-form-urlencoded",
 	"Accept" => "text/plain")
       req.basic_auth @user, @pass
       req.body = @payload

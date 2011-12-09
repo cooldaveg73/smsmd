@@ -30,10 +30,10 @@ describe DemoController do
       @doctor.reload.acc.should == true
     end
 
-    it "should accept an ACC from a doctor" do
+    it "should not accept an ACC from a doctor" do
       args = [:mobile => @doctor.mobile, :text => "ACC"]
       get :new, *args
-      @doctor.reload.acc.should == true
+      @doctor.reload.acc.should == false
     end
 
     it "should accept a FIN from a doctor who has ACC'd" do

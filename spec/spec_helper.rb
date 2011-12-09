@@ -42,4 +42,10 @@ RSpec.configure do |config|
     return Time.at(random_time).to_datetime.new_offset(+5.5/24)
   end
 
+  def test_sign_in(user=Factory(:user), project=Factory(:project))
+    user.projects << project unless user.projects.include?(project)
+    session[:project_id] = project.id
+    session[:user_id] = user.id
+  end
+
 end
