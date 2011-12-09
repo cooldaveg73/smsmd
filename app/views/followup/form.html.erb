@@ -1,0 +1,222 @@
+<% content_for :custom_scripts do %>
+  <%= stylesheet_link_tag 'base.css' %>
+  <%= javascript_include_tag 'jquery-1.6.js' %>
+  <%= javascript_include_tag 'rails.js' %>
+  <script type="text/javascript">
+  function lock(id) { 
+    document.getElementById(id).checked = !document.getElementById(id).checked; 
+  }
+  </script>
+<% end %>
+
+<% content_for :body do %>
+  <br />
+  <br />
+  <br><b>Follow up survey for case </b><%= link_to @kase.id, :controller => :cases, :action => :cases, 
+		  :id => @kase.id%>:</br>
+
+ <%= form_for @patient, :url => { :action => "form", :id => @kase.id, :edit => 1  } do |f| %>
+  <p><b>Patient Information </b></p>
+  <div class="field">
+    <%= f.label :first_name %><br />
+    <%= f.text_field :first_name %>
+  </div>
+  <div class="field">
+    <%= f.label :last_name %><br />
+    <%= f.text_field :last_name %>
+  </div>
+  <div class="field">
+    <%= f.label :mobile %><br />
+    <%= f.text_field :mobile %>
+  </div>
+  <div class="field">
+    <%= f.label :age %><br />
+    <%= f.number_field :age %>
+  </div>
+   <%= f.submit "Edit Patient" %>
+<% end %>
+
+
+  <p><b>Survey Questions</b></p>
+
+  <%= form_for @followup, :url => { :action => "success", :id => @kase.id } do |f| %>
+  <div class="field"> 
+    <%= f.label "1. Patient's gender (select one) Select 'pregnant' if applicable:" %>
+    <br />
+    <%= f.radio_button :patient_gender, 'male' %> <%= f.label "Male" %>
+    <%= f.radio_button :patient_gender, 'female' %> <%= f.label "Female" %>
+    <%= f.radio_button :patient_gender, 'pregnant' %> <%= f.label "Pregnant" %>
+    <br /><br />
+  </div>
+  <p>2. Symptoms experienced by patient (select all that apply and ): </p>
+   <%= check_box_tag(:s1) %>
+  <%= label_tag(:s1, "Fever") %><br />
+   <%= check_box_tag(:s2) %>
+  <%= label_tag(:s2, "Cough") %><br />
+   <%= check_box_tag(:s3) %>
+  <%= label_tag(:s3, "Cold") %><br />
+   <%= check_box_tag(:s4) %>
+  <%= label_tag(:s4, "Diarrhea") %><br />
+   <%= check_box_tag(:s5) %>
+  <%= label_tag(:s5, "Stomach Ache") %><br />
+  <%= check_box_tag(:s6) %>
+  <%= label_tag(:s6, "Head Ache") %><br />
+  <%= check_box_tag(:s7) %>
+  <%= label_tag(:s7, "Rash") %><br />
+   <%= label_tag(:s8, "Other:") %>
+   <%= text_field_tag(:s8) %><br />
+   <%= label_tag(:s9, "Other: ") %>
+   <%= text_field_tag(:s9) %><br />
+<%= label_tag(:s10, "Other: ") %>
+  <%= text_field_tag(:s10) %>
+
+    <br /><br />
+    <div class="field"> 
+    <%= f.label "3. Number of days patient was (or has been) sick:" %><%= f.number_field :days_sick %>
+    <br /><br />
+  </div>
+  <div class="field"> 
+    <%= f.label "4. Patient is still sick (at time of survey):" %>
+    <br />
+    <%= f.radio_button :still_sick, '1' %> <%= f.label "True" %>
+    <%= f.radio_button :still_sick, '0' %> <%= f.label "False" %>
+    <br /><br />
+  </div>
+  <p>5. Patient Actions.  Check all items the doctor recommended and/or the patient did: </p>
+
+	<table border="1">
+	<tr>
+	<th>Action</th>
+	<th>Patient Did</th>
+	<th>Doctor Recommended</th>
+	</tr>
+        <tr>
+	<th>Tablets</th>
+	<th><%= check_box_tag(:s20) %></th>
+	<th><%= check_box_tag(:s30) %></th>
+	</tr>
+	<tr>
+	<th>Syrup</th>
+	<th><%= check_box_tag(:s21) %></th>
+	<th><%= check_box_tag(:s31) %></th>
+	</tr>
+	<tr>
+	<th>Injections</th>
+	<th><%= check_box_tag(:s22) %></th>
+	<th><%= check_box_tag(:s32) %></th>
+	</tr>
+	<tr>
+	<th>PHC Doctor</th>
+	<th><%= check_box_tag(:s23) %></th>
+	<th><%= check_box_tag(:s33) %></th>
+	</tr>
+	<tr>
+	<th>Go to Hospital</th>
+	<th><%= check_box_tag(:s24) %></th>
+	<th><%= check_box_tag(:s34) %></th>
+	</tr>
+	<tr>
+	<th>At Home Care (Rest, ORS, etc.)</th>
+	<th><%= check_box_tag(:s25) %></th>
+	<th><%= check_box_tag(:s35) %></th>
+	</tr>
+	<tr>
+	<th>See Quack Doctor</th>
+	<th><%= check_box_tag(:s26) %></th>
+	<th><%= check_box_tag(:s36) %></th>
+	</tr>
+	<tr>
+	<th>Get Advice from Medical Dispensary</th>
+	<th><%= check_box_tag(:s27) %></th>
+	<th><%= check_box_tag(:s37) %></th>
+	</tr>
+	<tr>
+	<th><p>Other: </p><%= text_field_tag(:s48) %></th>
+	<th><%= check_box_tag(:s28) %></th>
+	<th><%= check_box_tag(:s38) %></th>
+	</tr>
+	</table>
+    <br /><br />
+  <div class="field"> 
+    <%= f.label "6. Patient followed all of the doctor's advice:" %>
+    <br />
+    <%= f.radio_button :followed_advice, '1' %> <%= f.label "True" %>
+    <%= f.radio_button :followed_advice, '0' %> <%= f.label "False" %>
+    <br /><br />
+  </div>
+    <div class="field"> 
+    <%= f.label "7. Why the patient deviated from the doctor's advice (select one).  If the patient followed all advice,
+select 'Followed all advice':" %>
+    <br />
+    <%= f.radio_button :followed_advice_comments, 'chose not to pay' %> <%= f.label "Chose not to pay (but had means to)" %><br />
+    <%= f.radio_button :followed_advice_comments, 'inability to pay' %> <%= f.label "Could not pay" %><br />
+    <%= f.radio_button :followed_advice_comments, 'did not trust' %> <%= f.label "Did not trust the advice" %><br />
+    <%= f.radio_button :followed_advice_comments, 'travel time' %> <%= f.label "Excessive travel time" %><br />
+    <%= f.radio_button :followed_advice_comments, 'other' %> <%= f.label "Other reason" %><br />
+    <%= f.radio_button :followed_advice_comments, 'followed all advice' %> <%= f.label "followed all advice" %><br />
+    <br /><br />
+  </div>
+  <div class="field"> 
+    <%= f.label "8. Patient received advice within 24 hours:" %>
+    <br />
+    <%= f.radio_button :within_24_hours, '1' %> <%= f.label "True" %>
+    <%= f.radio_button :within_24_hours, '0' %> <%= f.label "False" %>
+    <br /><br />
+  </div>
+  <div class="field"> 
+    <%= f.label "9. Patient would use the service again:" %>
+    <br />
+    <%= f.radio_button :would_use_again, '1' %> <%= f.label "True" %>
+    <%= f.radio_button :would_use_again, '0' %> <%= f.label "False" %>
+    <br /><br />
+  </div>
+  <div class="field"> 
+    <%= f.label "10. Patient's employment (select one):" %>
+    <br />
+    <%= f.radio_button :patient_work, 'agriculture' %> <%= f.label "Agriculture" %><br />
+    <%= f.radio_button :patient_work, 'government scheme' %> <%= f.label "Government Work Scheme" %><br />
+    <%= f.radio_button :patient_work, 'social worker' %> <%= f.label "Social Worker" %><br />
+    <%= f.radio_button :patient_work, 'student' %> <%= f.label "Student" %><br />
+    <%= f.radio_button :patient_work, 'child' %> <%= f.label "Child" %><br />
+    <%= f.radio_button :patient_work, 'other' %> <%= f.label "Other" %><br />
+    <br /><br />
+  </div>
+  <div class="field"> 
+    <%= f.label "11. Patient's family size:" %><%= f.number_field :patient_family_size %>
+    <br /><br />
+  </div>
+  <div class="field"> 
+    <%= f.label "12. Patient's family income (Rs/mo.):" %><%= f.number_field :patient_family_income %>
+    <br /><br />
+  </div>
+  <div class="field"> 
+    <%= f.label "13. I talked with (select one):" %>
+     <br />
+    <%= f.radio_button :talked_with, 'patient' %> <%= f.label "Patient" %>
+    <%= f.radio_button :talked_with, 'vhd' %> <%= f.label "VHD" %>
+    <%= f.radio_button :talked_with, 'family member' %> <%= f.label "Family Worker" %>
+    <%= f.radio_button :talked_with, 'other' %> <%= f.label "Other" %>
+    <br /><br />	 
+  </div>
+   <div class="field"> 
+    <%= f.label "14. I think this case is:" %>
+    <br />
+    <%= f.radio_button :case_is_real, '1' %> <%= f.label "Real" %>
+    <%= f.radio_button :case_is_real, '0' %> <%= f.label "Fake" %>
+    <br /><br />
+  </div>
+  <div class="field"> 
+    <%= f.label "15. Why I think this case is real or fake (max. 40 characters):" %><%= f.text_field :case_is_real_comments, :size => 40 %>
+    <br /><br />
+  </div>
+   <div class="field"> 
+    <%= f.label "16. General Comments (max. 255 characters):" %><%= f.text_field :general_comments, :maxlength => 255, :size => 40  %>
+    <br /><br />
+  </div>
+    <%= f.submit "Submit Followup" %>
+    <br />
+  <% end %>
+
+  <br />
+
+<% end %>

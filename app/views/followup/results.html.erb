@@ -1,0 +1,101 @@
+<% content_for :custom_scripts do %>
+  <%= stylesheet_link_tag 'base.css' %>
+  <%= stylesheet_link_tag 'tables.css' %>
+  <%= javascript_include_tag 'jquery-1.6.js' %>
+  <%= javascript_include_tag 'rails.js' %>
+  <script type="text/javascript">
+  function lock(id) { 
+    document.getElementById(id).checked = !document.getElementById(id).checked; 
+  }
+  </script>
+<% end %>
+
+<% content_for :body do %>
+  <br />
+  <br />
+  <%= button_to "Redo Search", :controller => :followup, :action => :options %>
+
+  <br><b>Select 'Follow Up' to follow up</b></br>
+
+<table>
+  <thead class="casesHead" id="cases">
+  <tr>
+    <th>Follow Up</th>
+    <th>Case</th>
+    <th>VHD Name</th>
+    <th>Patient Name</th>
+    <th>REQ SMS</th>
+    <th>Doctor Name</th>
+    <th>Last Doctor SMS</th>
+    <th>Alert Sent</th>
+    <th>Date</th>
+  </tr>
+  </thead>
+
+  <tbody>
+	  <% @cases.each do |kase| %>
+	  <tr>
+
+	    <!-- Follow Up -->
+	    <td><%= button_to "Follow Up", :controller => :followup, :action => :form, :id => kase.id, :edit => 0 %></td>
+
+	    <!-- Case -->
+	    <td>
+	      <%= link_to kase.id, :controller => :cases, :action => :cases, 
+		  :id => kase.id%>
+	    </td>
+
+	    <!-- VHD -->
+	    <% unless kase.vhd.nil? %>
+	      <td>
+		<%= link_to kase.vhd.name, :controller => :messages, 
+		    :action => :messages, :person_id => kase.vhd.id, 
+		    :person_type => "Vhd" %>
+	      </td>
+	    <% else %>
+	      <td></td>
+	    <% end %>
+
+	    <!-- Patient -->
+	    <% unless kase.patient.nil? %>
+	      <td><%= kase.patient.name %></td>
+	    <% else %>
+	      <td></td>
+	    <% end %>
+
+	    <!-- REQ SMS -->
+ 	    <% unless kase.opening_message.nil? %>
+	    <td><%= kase.opening_message.msg %></td>   
+	    <% else %>
+	      <td></td>
+	    <% end %>
+
+	    <!-- Doctor -->
+	    <% unless kase.doctor.nil? %>
+	      <td><%= link_to kase.doctor.full_name, :controller => :messages, 
+		      :action => :messages, :person_id => kase.doctor.id,
+		      :person_type => "Doctor" %></td>
+	    <% else %>
+	      <td></td>
+	    <% end %>
+
+	    <!-- Last Doctor SMS -->
+	    <td><%= kase.last_doctor_msg %></td>
+
+	    <!-- Alert Sent -->
+	    <td><center>
+	      <% alerted = kase.alerted? ? "checked" : "unchecked" %>
+	      <% elem_id = "Case_#{kase.id}_ALERT" %>
+	      <% script_name = "lock('#{elem_id}')" %>
+	      <input type="checkbox" id="<%= elem_id %>" onclick="<%= script_name %>" <%= "checked=\"checked\"" if kase.alerted %>/>
+	    </center></td>
+
+	    <!-- Date -->
+	    <td><%= Time.at(kase.time_opened.to_i).strftime("%d %b") %></td>
+
+	  </tr>
+	  <% end %>
+	  </tbody>
+	  </table>
+  
+<% end %>

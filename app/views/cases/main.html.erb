@@ -14,6 +14,8 @@
   <br />
   <br />
 
+ <%= button_to "Follow Up!", :controller => :followup, :action => :options %>
+
   <table>
   <thead class="casesHead" id="cases">
   <tr>
@@ -109,7 +111,10 @@
 
     <!-- Follow Up -->
     <td><center>
-      <%= check_box_tag "nonya", "nonya", false %>
+      <% followed_up = kase.followed_up? ? "checked" : "unchecked" %>
+      <% elem_id = "Case_#{kase.id}_FOLLOW" %>
+      <% script_name = "lock('#{elem_id}')" %>
+      <input type="checkbox" id="<%= elem_id %>" onclick="<%= script_name %>" <%= "checked=\"checked\"" if kase.followed_up %>/>
     </center></td>
 
     <!-- Date -->

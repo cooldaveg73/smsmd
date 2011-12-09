@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111022155343) do
+ActiveRecord::Schema.define(:version => 20111201084223) do
 
   create_table "apms", :force => true do |t|
     t.string   "first_name", :limit => 20
@@ -91,6 +91,29 @@ ActiveRecord::Schema.define(:version => 20111022155343) do
 
   add_index "doctors", ["project_id"], :name => "index_doctors_on_project_id"
 
+  create_table "followups", :force => true do |t|
+    t.integer  "case_id"
+    t.string   "patient_gender",           :limit => 10
+    t.integer  "days_sick"
+    t.boolean  "still_sick"
+    t.boolean  "within_24_hours"
+    t.boolean  "followed_advice"
+    t.string   "followed_advice_comments", :limit => 40
+    t.boolean  "would_use_again"
+    t.string   "patient_work",             :limit => 20
+    t.integer  "patient_family_size"
+    t.integer  "patient_family_income"
+    t.string   "talked_with",              :limit => 20
+    t.boolean  "case_is_real"
+    t.string   "case_is_real_comments",    :limit => 40
+    t.string   "general_comments"
+    t.text     "symptoms"
+    t.text     "patient_did"
+    t.text     "doctor_recommended"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "hospitals", :force => true do |t|
     t.string   "name"
     t.integer  "village_id"
@@ -164,6 +187,15 @@ ActiveRecord::Schema.define(:version => 20111022155343) do
     t.datetime "updated_at"
   end
 
+  create_table "patient_actions", :force => true do |t|
+    t.string   "action",             :limit => 20
+    t.boolean  "doctor_recommended"
+    t.boolean  "patient_did"
+    t.integer  "case_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "patients", :force => true do |t|
     t.string   "first_name", :limit => 20
     t.string   "last_name",  :limit => 20
@@ -217,6 +249,13 @@ ActiveRecord::Schema.define(:version => 20111022155343) do
     t.integer  "end_minute"
     t.integer  "end_second"
     t.integer  "doctor_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "symptoms", :force => true do |t|
+    t.string   "name",       :limit => 20
+    t.integer  "case_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -41,6 +41,12 @@ Mh::Application.routes.draw do
   match "/cases",	:to => "cases#cases"
   match "/messages",	:to => "messages#messages"
 
+  # Follow up
+  match "/followup/options",   :to => "followup#options"
+  match "/followup/results",   :to => "followup#results"
+  match "/followup/form",      :to => "followup#form"
+  match "/followup/success",   :to => "followup#success"
+
   # These routes are only for admins
   resources :users, 		:except => [:destroy]
   match "/users/destroy/:id", 	:to => "users#destroy"

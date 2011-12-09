@@ -1,0 +1,16 @@
+<% content_for :custom_scripts do %>
+  <%= stylesheet_link_tag 'base.css' %>
+  <%= javascript_include_tag 'jquery-1.6.js' %>
+  <%= javascript_include_tag 'rails.js' %>
+  <script type="text/javascript">
+  function lock(id) { 
+    document.getElementById(id).checked = !document.getElementById(id).checked; 
+  }
+  </script>
+<% end %>
+
+<% content_for :body do %>
+  <br />
+  <br />
+  
+<% end %>
