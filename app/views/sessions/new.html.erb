@@ -86,6 +86,14 @@
 	    </tr>
 
 	    </table>
+	    
 	<% end %>
 
+        <center>
+	<%= link_to "Start A New Project", 
+	  {:controller => "new_project", :action => "new"}, 
+	  :class => "newprojectbutton" %>
+	</center>
+	<br />
+	<br />
 <% end %>

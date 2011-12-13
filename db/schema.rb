@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111201084223) do
+ActiveRecord::Schema.define(:version => 20111209075558) do
 
   create_table "apms", :force => true do |t|
     t.string   "first_name", :limit => 20
@@ -230,6 +230,18 @@ ActiveRecord::Schema.define(:version => 20111201084223) do
     t.string   "req_format_msg",        :limit => 1024,                               :default => "Sorry, wrong format. Please re-send in this way: REQ (patient good name) (patient surname) (patient age (40y, A, C, I, E, P)) (patient mobile) (patient symptoms)"
     t.decimal  "time_zone",                             :precision => 3, :scale => 1
     t.string   "location",              :limit => 24
+  end
+
+  create_table "promoters", :force => true do |t|
+    t.string   "name",         :limit => 128
+    t.string   "organization", :limit => 32
+    t.string   "industry",     :limit => 32
+    t.string   "country",      :limit => 32
+    t.string   "website",      :limit => 1024
+    t.string   "email",        :limit => 128
+    t.string   "username",     :limit => 24
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "shifts", :force => true do |t|

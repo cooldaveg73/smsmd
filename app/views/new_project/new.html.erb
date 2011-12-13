@@ -1,0 +1,40 @@
+<% content_for :body do %>
+  <%= form_for :@promoter, :url => { :action => :create } do |p| %>
+    <table>
+      <tr>
+        <td><%= p.label :name, "Your Name" %>:</td>
+	<td><%= p.text_field :name, :size => 24 %></td>
+      </tr>
+      <tr>
+	<td><%= p.label :organization, "Your Organization's/Company's Name" %>:</td>
+        <td><%= p.text_field :organization, :size => 24 %></td>
+      </tr>
+      <tr>
+        <td><%= p.label :industry, "Type of work" %>:</td>
+	<td><%= p.text_field :industry, :size => 24 %></td>
+      </tr>
+      <tr>
+        <td><%= p.label :country, "Country" %>:</td>
+	<td><%= p.text_field :country, :size => 24 %></td>
+      </tr>
+      <tr>
+        <td><%= p.label :website, "Website" %>:</td>
+	<td><%= p.text_field :website, :size => 50 %></td>
+      </tr>
+      <tr>
+        <td><%= p.label :email, "Email Address" %>:</td>
+	<td><%= p.text_field :email, :size => 24 %></td>
+      </tr>
+      <tr>
+        <td><%= p.label :username, "Your Username" %></td>
+	<td><%= p.text_field :username, :size => 24 %></td>
+      </tr>
+
+      <tr><td colspan="2"><%= recaptcha_tags %></td></tr>
+
+      <tr>
+        <td><%= p.submit "Send email to create project" %></td>
+      </tr>
+    </table>
+  <% end %>
+<% end %>
