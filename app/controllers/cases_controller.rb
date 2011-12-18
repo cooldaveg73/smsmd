@@ -15,8 +15,8 @@ class CasesController < ApplicationController
 
   def cases
     kase = Case.find_by_id(params[:id].to_i)
-    redirect_to( root_path ) if kase.nil?
-    authorize_project(kase.project)
+    redirect_to(root_path) && return if kase.nil?
+    return unless authorize_project(kase.project)
     @messages = kase.messages.order("id DESC")
     @timezone = +5.5
     @title = "Case #{kase.id} Summary"

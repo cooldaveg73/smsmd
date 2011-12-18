@@ -22,5 +22,21 @@ Mh::Application.configure do
 
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
+
+  # Mail settings TODO: add to production once they are finalized
+  config.action_mailer.delivery_method = :smtp
+
+  config.action_mailer.smtp_settings = {
+    :address			=> "smtp.gmail.com",
+    :port			=> 587,
+    :domain			=> "app.mobilizinghealth.org",
+    :authentication		=> "plain",
+    :user_name			=> "mobilizinghealth",
+    :password			=> "simonsaysMH",
+    :enable_starttls_auto	=> true
+  }
+
+  config.action_mailer.default_url_options = { :host => "localhost:3000" }
+
 end
 

@@ -1,7 +1,8 @@
 Mh::Application.routes.draw do 
 
+  get "new_project/grant"
   get "new_project/new"
-  get "new_project/create"
+  post "new_project/create"
 
   match "/reporting", 	:to => "reporting#new"
   match "/datadive",    :to => "datadive#overview"

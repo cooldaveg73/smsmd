@@ -6,7 +6,6 @@
 #  first_name       :string(20)
 #  last_name        :string(20)
 #  mobile           :string(20)
-#  status           :string(10)
 #  last_paged       :datetime
 #  specialty        :string(20)
 #  hospital_id      :integer(4)
@@ -17,6 +16,7 @@
 #  project_id       :integer(4)
 #  points           :integer(4)      default(0)
 #  points_timestamp :datetime
+#  status           :string(24)
 #
 
 require 'spec_helper'
