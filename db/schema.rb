@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111201084223) do
+ActiveRecord::Schema.define(:version => 20111218181257) do
 
   create_table "apms", :force => true do |t|
     t.string   "first_name", :limit => 20
@@ -232,6 +232,18 @@ ActiveRecord::Schema.define(:version => 20111201084223) do
     t.string   "location",              :limit => 24
   end
 
+  create_table "promoters", :force => true do |t|
+    t.string   "name",         :limit => 128
+    t.string   "organization", :limit => 32
+    t.string   "industry",     :limit => 32
+    t.string   "country",      :limit => 32
+    t.string   "website",      :limit => 1024
+    t.string   "email",        :limit => 128
+    t.string   "username",     :limit => 24
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "shifts", :force => true do |t|
     t.integer  "start_hour"
     t.integer  "start_minute"
@@ -257,7 +269,6 @@ ActiveRecord::Schema.define(:version => 20111201084223) do
     t.string   "first_name", :limit => 20
     t.string   "last_name",  :limit => 20
     t.string   "mobile",     :limit => 20
-    t.string   "status",     :limit => 10
     t.string   "notes",      :limit => 1024
     t.integer  "village_id"
     t.integer  "user_id"
@@ -268,6 +279,7 @@ ActiveRecord::Schema.define(:version => 20111201084223) do
     t.boolean  "is_patient",                 :default => false
     t.integer  "doctor_id"
     t.string   "department", :limit => 24
+    t.string   "status",     :limit => 24
   end
 
   add_index "vhds", ["project_id"], :name => "index_vhds_on_project_id"
