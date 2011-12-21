@@ -11,8 +11,10 @@ class NewProjectController < ApplicationController
       # captcha is valid
       promoter = Promoter.new(params[:@promoter])
       if promoter.save
+        if PromoterMailer.promoter_notification(promoter).deliver
         PromoterMailer.admin_notification(promoter).deliver
         redirect_to "/login", :notice => "An email was sent to an administrator to confirm. Expect a reply shortly."
+	end
       else
         flash[:error] = "There was an error saving the promoter information. Please double check and try again."
         render :action => 'new'

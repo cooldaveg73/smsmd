@@ -1,10 +1,14 @@
 class PromoterMailer < ActionMailer::Base
   default :from => "MH admin <mobilizinghealth@gmail.com>"
-  default :to => "David <david@mobilizinghealth.org>"
 
-  def admin_notification(promoter)
+  def admin_notification(promoter, user)
     @promoter = promoter
-    mail(:subject => "New promoter on site")
+    mail(:subject => "New promoter on site", :to => user.email)
+  end
+
+  def promoter_notification(promoter)
+    @promoter = promoter
+
   end
 
   def registration_confirmation(promoter)

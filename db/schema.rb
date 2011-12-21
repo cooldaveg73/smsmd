@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111218181257) do
+ActiveRecord::Schema.define(:version => 20111219142951) do
 
   create_table "apms", :force => true do |t|
     t.string   "first_name", :limit => 20
@@ -263,6 +263,7 @@ ActiveRecord::Schema.define(:version => 20111218181257) do
     t.boolean  "is_admin"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "email",           :limit => 256
   end
 
   create_table "vhds", :force => true do |t|

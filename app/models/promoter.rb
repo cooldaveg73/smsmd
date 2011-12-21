@@ -15,4 +15,7 @@
 #
 
 class Promoter < ActiveRecord::Base
+  validates :name,	:length => { :minimum => 5, :maximum => 128 }
+  validates :email,	:presence => true
+  validates_presence_of :organization, :country
 end

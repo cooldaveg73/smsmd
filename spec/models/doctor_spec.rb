@@ -62,13 +62,13 @@ describe Doctor do
 
     it "should require a first name" do
       invalid_attr = Factory.attributes_for(:doctor).merge(:first_name => "")
-      no_name_doctor = Doctor.new( invalid_attr )
+      no_name_doctor = Doctor.new(invalid_attr)
       no_name_doctor.should_not be_valid 
     end
 
     it "should require a mobile" do
       invalid_attr = Factory.attributes_for(:doctor).merge(:mobile => "")
-      no_name_doctor = Doctor.new( invalid_attr )
+      no_name_doctor = Doctor.new(invalid_attr)
       no_name_doctor.should_not be_valid 
     end
   end
