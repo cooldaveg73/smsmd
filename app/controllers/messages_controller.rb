@@ -35,6 +35,7 @@ class MessagesController < ApplicationController
     @timezone = +5.5
     @title = "Messages: #{person.full_name}"
     @mobile = person.mobile
+    @person = person
     render :layout => "sortable_table"
   end
 

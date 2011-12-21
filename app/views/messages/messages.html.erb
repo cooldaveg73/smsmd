@@ -38,12 +38,14 @@
       <tr>
 	<td>
 	  <%= link_to "<<", :controller => :messages, :action => :messages,
-	      :page => @prev_page, :cellphone => @mobile %>
+	      :page => @prev_page, :person_id => @person.id,
+	      :person_type => @person.class %>
 	</td>
 	<% 8.times do %> <td></td> <% end %>
 	<td>
 	  <%= link_to ">>", :controller => :messages, :action => :messages,
-	      :page => @next_page, :cellphone => @mobile %>
+	      :page => @next_page, :person_id => @person.id,
+	      :person_type => @person.class %>
 	</td>
       </tr>
     </tfoot>
