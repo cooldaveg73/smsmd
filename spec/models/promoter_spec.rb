@@ -18,5 +18,4 @@ require 'spec_helper'
 
 describe Promoter do
 
-  before(:each) 
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111219142951) do
+ActiveRecord::Schema.define(:version => 20111228204440) do
 
   create_table "apms", :force => true do |t|
     t.string   "first_name", :limit => 20
@@ -242,6 +242,8 @@ ActiveRecord::Schema.define(:version => 20111219142951) do
     t.string   "username",     :limit => 24
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "key",          :limit => 1024
+    t.integer  "project_id"
   end
 
   create_table "shifts", :force => true do |t|

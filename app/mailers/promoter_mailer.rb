@@ -8,11 +8,15 @@ class PromoterMailer < ActionMailer::Base
 
   def promoter_notification(promoter)
     @promoter = promoter
-
+    mail(:to => "#{promoter.name} <#{promoter.email}>", 
+      :subject => "New Project for Mobilizing Health")
   end
 
-  def registration_confirmation(promoter)
+  def registration_confirmation(promoter, user, temp_pass)
+    @temp_pass = temp_pass
     @promoter = promoter
-    mail(:to => "#{promoter.name} <#{promoter.email}>", :subject => "Registered")
+    @user = user
+    mail(:to => "#{promoter.name} <#{promoter.email}>", 
+      :subject => "Registered for a new project with Mobilizing Health")
   end
 end

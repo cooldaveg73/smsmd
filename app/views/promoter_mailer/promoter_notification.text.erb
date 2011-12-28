@@ -1,0 +1,3 @@
+Thank you for setting up a new project <%= @promoter.name %>.
+
+Please click the following link to confirm your email address: <%= "http://#{ActionMailer::Base.default_url_options[:host]}/new_project/confirm_email?id=#{@promoter.id}&key=#{@promoter.key}" %>

@@ -9,12 +9,11 @@ class NewProjectController < ApplicationController
   def create
     if verify_recaptcha
       # captcha is valid
-      promoter = Promoter.new(params[:@promoter])
-      if promoter.save
-        if PromoterMailer.promoter_notification(promoter).deliver
-        PromoterMailer.admin_notification(promoter).deliver
-        redirect_to "/login", :notice => "An email was sent to an administrator to confirm. Expect a reply shortly."
-	end
+      @promoter = Promoter.new(params[:@promoter])
+      if @promoter.valid?
+	@promoter.update_attributes(:key => generate_temp_key(50))
+	PromoterMailer.promoter_notification(@promoter).deliver
+	redirect_to "/login", :notice => "Please check your email to confirm your email address."
       else
         flash[:error] = "There was an error saving the promoter information. Please double check and try again."
         render :action => 'new'
@@ -26,19 +25,41 @@ class NewProjectController < ApplicationController
     end  
   end
 
+  def confirm_email
+    promoter = Promoter.find_by_id(params[:id])
+    begin
+      if promoter.key == params[:key]
+        User.where("is_admin = ?", true). each do |u| 
+	  PromoterMailer.admin_notification(promoter, u).deliver
+	end
+	# regenerate the key to prevent further use of the link
+	@promoter.update_attributes(:key => generate_temp_key(50))
+	redirect_to "/login", :notice => "An email was sent to an admin. Please expect a reply shortly."
+      else
+      redirect_to "/login", :notice => "The key for this promoter is expired or invalid. Please contact Mobilizing Health or retry again later."
+      end
+    rescue
+      redirect_to "/login", :notice => "There was a problem with confirming that promoter."
+    end
+  end
+
   def grant
     promoter = Promoter.find_by_id(params[:id])
     if promoter.nil?
       redirect_to "/login", :notice => "Promoter info not found"
       return
+    elsif promoter.project
+      redirect_to "/login", :notice => "Promoter already has a project."
+      return
     end
     project = Project.create(:name => promoter.organization)
-    random_chars = ('A'..'Z').to_a + ('a'..'z').to_a + (1..9).to_a.map { |i| i.to_s }
-    temp_pass = ""
-    (rand(5) + 6).times { |i| temp_pass << random_chars[rand(random_chars.count)] }
-    User.create(:name => promoter.username, :password => temp_pass, 
+    User.where("is_admin = ?", true).each { |u| u.projects << project }
+    temp_pass = generate_temp_key
+    u = User.create(:name => promoter.username, :password => temp_pass, 
       :is_admin => false, :projects => [project])
-    redirect_to "/login", :notice => "Grant action fulfilled."
+    promoter.update_attributes(:project => project)
+    PromoterMailer.registration_confirmation(promoter, u, temp_pass).deliver
+    redirect_to "/login", :notice => "Grant action fulfilled for #{project.name} Project. An email has been sent to the promoter."
   end
 
 end
