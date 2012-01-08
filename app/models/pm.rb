@@ -35,7 +35,7 @@ class Pm < ActiveRecord::Base
   # notify scheme types: [ "acc", "req", "fin", "alert" ]
   def self.notify(type, kase)
     kase.project.pms.each do |pm|
-      query = "pm_id = ? AND alert_type = ?", pm.id, type
+      query = "pm_id = ? AND alert_type = ? AND active = ?", pm.id, type, true
       unless kase.project.notify_schemes.where(*query).blank?
 	send_info = { :msg => kase.send("#{type}_for_pm"), :case => kase }
 	Message.send_to_person(pm, send_info)
