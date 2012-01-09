@@ -124,9 +124,13 @@ class Case < ActiveRecord::Base
   def acc_for_vhd
     msg = "ACC for patient #{patient.name}"
     if project.include_doctor_name? || project.include_doctor_mobile?
-      msg += " - Dr. "
-      msg += doctor.name if project.include_doctor_name?
-      msg += doctor.mobile if project.include_doctor_mobile?
+      if project.include_doctor_name && project.include_doctor_mobile
+        msg += " - Dr. #{doctor.name} #{doctor.mobile}"
+      elsif project.include_doctor_name
+        msg += " - Dr. #{doctor.name}"
+      elsif project.include_doctor_mobile
+	msg += " - #{doctor.mobile}" 
+      end
     end
     msg += doctor.hospital.name unless doctor.hospital.nil?
     return msg
