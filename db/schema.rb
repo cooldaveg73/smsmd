@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111228204440) do
+ActiveRecord::Schema.define(:version => 20120109184330) do
 
   create_table "apms", :force => true do |t|
     t.string   "first_name", :limit => 20
@@ -266,6 +266,7 @@ ActiveRecord::Schema.define(:version => 20111228204440) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "email",           :limit => 256
+    t.integer  "new_project_id"
   end
 
   create_table "vhds", :force => true do |t|

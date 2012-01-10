@@ -6,6 +6,7 @@ class NewProjectController < ApplicationController
     @promoter = Promoter.new 
   end
 
+  # promoter enters information on form
   def create
     if verify_recaptcha
       # captcha is valid
@@ -25,6 +26,7 @@ class NewProjectController < ApplicationController
     end  
   end
 
+  # first link that is sent out to promoter directly after entering info
   def confirm_email
     promoter = Promoter.find_by_id(params[:id])
     begin
@@ -43,6 +45,7 @@ class NewProjectController < ApplicationController
     end
   end
 
+  # admin grants a new project to the promoter
   def grant
     promoter = Promoter.find_by_id(params[:id])
     if promoter.nil?
@@ -56,10 +59,13 @@ class NewProjectController < ApplicationController
     User.where("is_admin = ?", true).each { |u| u.projects << project }
     temp_pass = generate_temp_key
     u = User.create(:name => promoter.username, :password => temp_pass, 
-      :is_admin => false, :projects => [project])
+      :is_admin => false, :projects => [project], :new_project => project)
     promoter.update_attributes(:project => project)
     PromoterMailer.registration_confirmation(promoter, u, temp_pass).deliver
     redirect_to "/login", :notice => "Grant action fulfilled for #{project.name} Project. An email has been sent to the promoter."
+  end
+
+  def setup1
   end
 
 end

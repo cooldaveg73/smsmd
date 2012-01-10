@@ -25,8 +25,9 @@ class User < ActiveRecord::Base
   has_one :doctor,		:dependent => :nullify
   has_one :vhd,			:dependent => :nullify
 
-  validates :name,		:presence => true,
-				:uniqueness => true
+  belongs_to :new_project,	:class_name => "Project"
+
+  validates :name,		:presence => true, :uniqueness => true
   validates :password, 		:confirmation => true
   validate :password_must_be_present
 

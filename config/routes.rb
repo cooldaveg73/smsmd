@@ -4,6 +4,7 @@ Mh::Application.routes.draw do
   get "new_project/new"
   post "new_project/create"
   get "new_project/confirm_email"
+  get "new_project/setup1"
 
   match "/reporting", 	:to => "reporting#new"
   match "/datadive",    :to => "datadive#overview"
