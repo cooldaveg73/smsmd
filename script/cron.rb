@@ -39,7 +39,10 @@ end
 sixty_mins_ago = 60.minutes.ago.utc.to_datetime
 criteria = 'status = "opened" AND time_opened < ?'
 opened_cases = Case.where(criteria, sixty_mins_ago)
-opened_cases.each { |c| c.close }
+opened_cases.each do |c| 
+  c.send_close_message
+  c.close
+end
 
 # Task: acc_reminder
 five_mins_ago = 5.minutes.ago.utc.to_datetime
