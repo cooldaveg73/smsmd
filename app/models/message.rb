@@ -108,8 +108,8 @@ class Message < ActiveRecord::Base
 
     def self.send_msg(dest, msg, phonecode)
       # SMSGupShup definition v1.1 Copyright
-      @user = '2000069911'
-      @pass = 'YQxgqTjFe'
+      @user = '2000037632' 
+      @pass = 'b1izpV9yI'
       @host = 'enterprise.smsgupshup.com'
       @port = '80'
       msg = URI.encode(msg)
