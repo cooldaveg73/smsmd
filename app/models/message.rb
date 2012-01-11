@@ -116,10 +116,10 @@ class Message < ActiveRecord::Base
 
       @post_ws = [ "/GatewayAPI/rest?method=sendMessage", 
         "userid=#{@user}", "password=#{@pass}", "msg=#{msg}",
-	"sent_to=0012066056201", "v=1.1" ].join("&")
+	"sent_to=#{dest}", "v=1.1" ].join("&")
 
       @payload = { "method" => "sendMessage", "userid" => @user, 
-        "password" => @pass, "msg" => msg, "send_to" => "0012066056201", 
+        "password" => @pass, "msg" => msg, "send_to" => dest, 
 	"v" => 1.1 }
 
       req = Net::HTTP::Post.new(@post_ws,
