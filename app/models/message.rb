@@ -116,7 +116,7 @@ class Message < ActiveRecord::Base
 
       @post_ws = [ "/GatewayAPI/rest?method=sendMessage", 
         "userid=#{@user}", "password=#{@pass}", "msg=#{msg}",
-	"sent_to=#{dest}", "v=1.1" ].join("&")
+	"send_to=#{dest}", "v=1.1" ].join("&")
 
       @payload = { "method" => "sendMessage", "userid" => @user, 
         "password" => @pass, "msg" => msg, "send_to" => dest, 
