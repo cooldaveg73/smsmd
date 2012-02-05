@@ -115,9 +115,9 @@ class ReportingController < ApplicationController
 
     def set_project_data(time)
       return get_current_data(time) if @is_current
-      @cases_today = @cases_per_day_week = NO_ENTRY
-      @fake_today = @fake_week = NO_ENTRY
-      @doc_response_today = @doc_response_week = NO_ENTRY
+      @cases_today, @cases_per_day_week = [NO_ENTRY, NO_ENTRY]
+      @fake_today, @fake_week = [NO_ENTRY, NO_ENTRY]
+      @doc_response_today , @doc_response_week = [NO_ENTRY, NO_ENTRY]
       return get_old_data(time)
     end
 
