@@ -13,7 +13,7 @@ dropped_points = -4
                         800 =>	"Rs. 1,200 Gift Card",
 			1600 =>	"Rs. 2,000 Gift Card",
 			2400 =>	"Rs. 3,000 Gift Card",
-			4300 =>	"Dinner at Tag Hotel Restaurant (Rs. 5000)" }
+			4300 =>	"Dinner at Taj Hotel Restaurant (Rs. 5000)" }
 default_stamp = Time.utc(2011, 8, 15, 3).to_datetime
 #####################################################
 

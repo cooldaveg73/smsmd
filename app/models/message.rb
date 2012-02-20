@@ -108,18 +108,18 @@ class Message < ActiveRecord::Base
 
     def self.send_msg(dest, msg, phonecode)
       # SMSGupShup definition v1.1 Copyright
-      @user = '2000069911'
-      @pass = 'YQxgqTjFe'
+      @user = '2000037632' 
+      @pass = 'b1izpV9yI'
       @host = 'enterprise.smsgupshup.com'
       @port = '80'
       msg = URI.encode(msg)
 
       @post_ws = [ "/GatewayAPI/rest?method=sendMessage", 
         "userid=#{@user}", "password=#{@pass}", "msg=#{msg}",
-	"sent_to=0012066056201", "v=1.1" ].join("&")
+	"send_to=#{dest}", "v=1.1" ].join("&")
 
       @payload = { "method" => "sendMessage", "userid" => @user, 
-        "password" => @pass, "msg" => msg, "send_to" => "0012066056201", 
+        "password" => @pass, "msg" => msg, "send_to" => dest, 
 	"v" => 1.1 }
 
       req = Net::HTTP::Post.new(@post_ws,

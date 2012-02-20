@@ -104,7 +104,7 @@
 	  <% end %>
 
           <!-- Mark Fake SMS -->
-	  <% if m.case_id? && m.msg.strip.split(/\s+/).first.match(/req/i) %>
+	  <% if m.case_id? && m.msg.strip != "" && m.msg.strip.split(/\s+/).first.match(/req/i) %>
 	    <td><center>
 	      <%= form_for :case, :url => { :action => :mark_fake }, 
 			          :remote => true do |f| %>
