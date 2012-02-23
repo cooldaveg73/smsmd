@@ -26,7 +26,7 @@ class NewProjectController < ApplicationController
     end  
   end
 
-  # first link that is sent out to promoter directly after entering info
+  # first link that is sent out to promoter after entering info to confirm email
   def confirm_email
     promoter = Promoter.find_by_id(params[:id])
     begin
