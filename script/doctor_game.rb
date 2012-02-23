@@ -130,9 +130,12 @@ end
                             ].join(" ")
       Message.send_to_person(doctor, {:msg => message_for_doctor})
       doctor.project.pms.each do |pm|
-        message_for_pm = [ "**NOTE**", message_for_doctor ].join(" ")
-	send_info = { :msg => message_for_pm, :project => doctor.project }
-        Message.send_to_person(pm, send_info)
+        # TODO: add this into code related to notify schemes!!!
+        unless pm.first_name == "Yashoda"
+          message_for_pm = [ "**NOTE**", message_for_doctor ].join(" ")
+      send_info = { :msg => message_for_pm, :project => doctor.project }
+          Message.send_to_person(pm, send_info)
+        end
       end
     end
   end
