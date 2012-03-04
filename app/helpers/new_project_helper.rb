@@ -4,5 +4,6 @@ module NewProjectHelper
     random_chars = ('A'..'Z').to_a + ('a'..'z').to_a + (1..9).to_a.map { |i| i.to_s }
     temp_key = ""
     (rand(variation) + min_length).times { |i| temp_key << random_chars[rand(random_chars.count)] }
+    return temp_key
   end
 end

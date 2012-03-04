@@ -9,6 +9,9 @@
     <%= link_to "#{p.name}", :action => 'project', :project_id => p.id %>
     <br />
   <% end %>
+  <% if @user.is_admin %>
+    <%= link_to "Set up a new project", :controller => 'new_project',
+        :action => 'setup0' %>
+  <% end %>
   <br />
 <% end %>
-  

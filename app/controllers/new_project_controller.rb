@@ -56,6 +56,7 @@ class NewProjectController < ApplicationController
       return
     end
     project = Project.create(:name => promoter.organization)
+    # may not want to grant the admins access to every project but do for now
     User.where("is_admin = ?", true).each { |u| u.projects << project }
     temp_pass = generate_temp_key
     u = User.create(:name => promoter.username, :password => temp_pass, 
@@ -65,6 +66,34 @@ class NewProjectController < ApplicationController
     redirect_to "/login", :notice => "Grant action fulfilled for #{project.name} Project. An email has been sent to the promoter."
   end
 
+  # the first step for setting up a project for an admin
+  def setup0
+    @title = "New Project"
+    @subtitle = ""
+    render 'edit_project'
+  end
+
+  def setup0_create
+    @title = "New Project"
+    @subtitle = ""
+    name = params[:project][:name]
+    users = []
+    User.all.each do |user|
+      if params[:project][user.id.to_s] == "1"
+        users << user
+      end
+    end
+    project = Project.create(:name => name)
+    @message = "#{project.name} created with users: "
+    users.each do |user|
+      @message += "  #{user.name}   "
+      project.users << user
+    end
+    project.save!
+    render 'show'
+  end
+
+  # the first step for setting up a project for anyone
   def setup1
   end
 
