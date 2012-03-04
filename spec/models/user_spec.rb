@@ -9,6 +9,8 @@
 #  is_admin        :boolean(1)
 #  created_at      :datetime
 #  updated_at      :datetime
+#  email           :string(256)
+#  new_project_id  :integer(4)
 #
 
 require 'spec_helper'

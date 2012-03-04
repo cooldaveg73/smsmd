@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111218181257) do
+ActiveRecord::Schema.define(:version => 20120302061019) do
 
   create_table "apms", :force => true do |t|
     t.string   "first_name", :limit => 20
@@ -230,6 +230,9 @@ ActiveRecord::Schema.define(:version => 20111218181257) do
     t.string   "req_format_msg",        :limit => 1024,                               :default => "Sorry, wrong format. Please re-send in this way: REQ (patient good name) (patient surname) (patient age (40y, A, C, I, E, P)) (patient mobile) (patient symptoms)"
     t.decimal  "time_zone",                             :precision => 3, :scale => 1
     t.string   "location",              :limit => 24
+    t.boolean  "has_patient_buyers"
+    t.boolean  "has_doctor_game"
+    t.string   "hlp_format_msg",        :limit => 1024
   end
 
   create_table "promoters", :force => true do |t|
@@ -266,20 +269,22 @@ ActiveRecord::Schema.define(:version => 20111218181257) do
   end
 
   create_table "vhds", :force => true do |t|
-    t.string   "first_name", :limit => 20
-    t.string   "last_name",  :limit => 20
-    t.string   "mobile",     :limit => 20
-    t.string   "notes",      :limit => 1024
+    t.string   "first_name",       :limit => 20
+    t.string   "last_name",        :limit => 20
+    t.string   "mobile",           :limit => 20
+    t.string   "notes",            :limit => 1024
     t.integer  "village_id"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "project_id"
     t.integer  "phc_id"
-    t.boolean  "is_patient",                 :default => false
+    t.boolean  "is_patient",                       :default => false
     t.integer  "doctor_id"
-    t.string   "department", :limit => 24
-    t.string   "status",     :limit => 24
+    t.string   "department",       :limit => 24
+    t.string   "status",           :limit => 24
+    t.boolean  "is_patient_buyer"
+    t.integer  "buyer_count"
   end
 
   add_index "vhds", ["project_id"], :name => "index_vhds_on_project_id"

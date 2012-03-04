@@ -11,10 +11,6 @@ class ProjectController < ApplicationController
     @users = project.users
     @apms = project.apms
     @project = project
-#    @data_type = [ vhds.insert(0, "VHD") , docs.insert(0, "Doctor"), 
-#             pms.insert(0, "PM") , users.insert(0, "User"), 
-#	     apms.insert(0, "APM") ]
-
     @is_admin = user.is_admin || false
   end
 
@@ -109,7 +105,6 @@ class ProjectController < ApplicationController
     render 'show'
   end
 
-
   def new
     get_title
     @submit = 'Create'
@@ -128,36 +123,16 @@ class ProjectController < ApplicationController
       when "APM"
     end
   end
+
+  def manage_patient_vhds
+    project = get_project_and_set_subtitle
+    @title = "Manage Patient VHDs"
+    @patient_buyers = project.vhds.where("is_patient_buyer = ?", true)
+    @vhd = Vhd.new
+  end
   
   def deactivate
-
-
-  end
-
-  def new_project
-    @title = "New Project"
-    @subtitle = ""
-    render 'edit_project'
-  end
-
-  def create_project
-    @title = "New Project"
-    @subtitle = ""
-    name = params[:project][:name]
-    users = []
-    User.all.each do |user|
-      if params[:project][user.id.to_s] == "1"
-        users << user
-      end
-    end
-    project = Project.create(:name => name)
-    @message = "#{project.name} created with users: "
-    users.each do |user|
-      @message += "  #{user.name}   "
-      project.users << user
-    end
-    project.save!
-    render 'show'
+    # TODO:
   end
 
   def doctor_demo

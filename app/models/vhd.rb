@@ -2,21 +2,23 @@
 #
 # Table name: vhds
 #
-#  id         :integer(4)      not null, primary key
-#  first_name :string(20)
-#  last_name  :string(20)
-#  mobile     :string(20)
-#  status     :string(10)
-#  notes      :string(1024)
-#  village_id :integer(4)
-#  user_id    :integer(4)
-#  created_at :datetime
-#  updated_at :datetime
-#  project_id :integer(4)
-#  phc_id     :integer(4)
-#  is_patient :boolean(1)      default(FALSE)
-#  doctor_id  :integer(4)
-#  department :string(24)
+#  id               :integer(4)      not null, primary key
+#  first_name       :string(20)
+#  last_name        :string(20)
+#  mobile           :string(20)
+#  notes            :string(1024)
+#  village_id       :integer(4)
+#  user_id          :integer(4)
+#  created_at       :datetime
+#  updated_at       :datetime
+#  project_id       :integer(4)
+#  phc_id           :integer(4)
+#  is_patient       :boolean(1)      default(FALSE)
+#  doctor_id        :integer(4)
+#  department       :string(24)
+#  status           :string(24)
+#  is_patient_buyer :boolean(1)
+#  buyer_count      :integer(4)
 #
 
 class Vhd < ActiveRecord::Base

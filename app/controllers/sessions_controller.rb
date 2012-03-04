@@ -28,6 +28,7 @@ class SessionsController < ApplicationController
       session[:project_id] = user.projects.first.id
       redirect_to :controller => 'cases', :action => 'main' 
     else
+      @user = user
       @projects = user.projects
     end
   end
