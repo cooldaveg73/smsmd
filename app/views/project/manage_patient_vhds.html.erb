@@ -1,4 +1,15 @@
-<% content_for :body do %>do
+<% content_for :body do %>
   <br />
   <br />
+  <table>
+    <tr><td colspan="3"><%= link_to "... Add Patient Buyer", :action => 'new', :type => "VHD", :patient_buyer => true %></td></tr>
+  <% @patient_buyers.each do |v| %>
+  <tr>
+    <td>
+      <%= link_to v.full_name, :controller > :messages, :action => :messages,
+        :person_id => v.id, :person_type => v.class.to_s %>
+    </td>
+  </tr>
+  <% end %>
+  </table>
 <% end %>

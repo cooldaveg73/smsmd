@@ -114,12 +114,12 @@ class ProjectController < ApplicationController
       when "VHD"
         @vhd = Vhd.new
         @title = "Add VHD"
-	@phcs = Project.find_by_id(session[:project_id]).phcs
-	render 'edit_vhd'
+	    @phcs = Project.find_by_id(session[:project_id]).phcs
+	    render 'edit_vhd'
       when "DOCTOR"
         @doctor = Doctor.new
         @title = "Add Doctor"
-	render 'edit_doctor'
+	    render 'edit_doctor'
       when "APM"
     end
   end
@@ -129,6 +129,10 @@ class ProjectController < ApplicationController
     @title = "Manage Patient VHDs"
     @patient_buyers = project.vhds.where("is_patient_buyer = ?", true)
     @vhd = Vhd.new
+  end
+
+  def edit_patient_vhd
+    # TODO: 
   end
   
   def deactivate
