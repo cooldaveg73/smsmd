@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120302061019) do
+ActiveRecord::Schema.define(:version => 20120306040533) do
 
   create_table "apms", :force => true do |t|
     t.string   "first_name", :limit => 20
@@ -233,6 +233,21 @@ ActiveRecord::Schema.define(:version => 20120302061019) do
     t.boolean  "has_patient_buyers"
     t.boolean  "has_doctor_game"
     t.string   "hlp_format_msg",        :limit => 1024
+    t.boolean  "has_ans"
+  end
+
+  create_table "promoters", :force => true do |t|
+    t.string   "name",         :limit => 128
+    t.string   "organization", :limit => 32
+    t.string   "industry",     :limit => 32
+    t.string   "country",      :limit => 32
+    t.string   "website",      :limit => 1024
+    t.string   "email",        :limit => 128
+    t.string   "username",     :limit => 24
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "key",          :limit => 1024
+    t.integer  "project_id"
   end
 
   create_table "shifts", :force => true do |t|

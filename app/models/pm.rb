@@ -32,7 +32,7 @@ class Pm < ActiveRecord::Base
   def name; [first_name, last_name].join(" "); end;
   def full_name; [first_name, last_name].join(" "); end;
 
-  # notify scheme types: [ "acc", "req", "fin", "alert" ]
+  # notify scheme types: [ "acc", "req", "fin", "alert", "hlp" ]
   def self.notify(type, kase)
     kase.project.pms.each do |pm|
       if pm.active

@@ -141,31 +141,65 @@ class MessagesController < ApplicationController
     end
 
     def handle_text_from_vhd(vhd, message_words)
-      if message_words[0].match(/req/i)
-	handle_req(vhd, message_words)
-      elsif message_words[0].match(/ans/i)
+      if vhd.is_patient
+        handle_text_from_patient_vhd(vhd, message_words)
+      elsif message_words[0].match(/req/i) && vhd.project.has_reqs
+        handle_req(vhd, message_words)
+      elsif message_words[0].match(/ans/i) && vhd.project.has_ans
         handle_ans(vhd, message_words)
       else
         Message.save_from_person(vhd, @save_info)
-	@send_info[:msg] = vhd.project.req_format_msg
-	Message.send_to_person(vhd, @send_info)
+	    @send_info[:msg] = vhd.project.req_format_msg
+	    Message.send_to_person(vhd, @send_info)
         vhd.update_attributes(:status => "vacant")
+      end
+    end
+
+    def handle_text_from_patient_vhd(vhd, message_words)
+      if vhd.project.has_hlps
+        handle_hlp(vhd, message_words)
+      else
+        Message.save_from_person(vhd, @save_info)
+	    @send_info[:msg] = DEFAULT_NO_PATIENTS_MSG
+	    Message.send_to_person(vhd, @send_info)
+        vhd.update_attributes(:status => "vacant")
+      end
+    end
+
+    def handle_hlp(vhd, message_words)
+      if vhd.is_patient_buyer && vhd.buyer_count <= 0
+        Message.save_from_person(vhd, @save_info)
+	    @send_info[:msg] = DEFAULT_NO_POINTS_MSG
+        Message.send_to_person(vhd, @send_info)
+        return
+      end
+      if message_words[0].match(/hlp/i)
+        kase = Case.new_case_from_vhd(vhd)
+	    [@save_info, @send_info].each { |h| h[:case] = kase }
+	    Message.save_from_person(vhd, @save_info)
+        Pm.notify("hlp", kase)
+	    doctors_to_page = vhd.project.get_doctors_to_page(kase)
+	    doctors_to_page.each { |d| d.page(kase) }
+      else
+        Message.save_from_person(vhd, @save_info)
+	    @send_info[:msg] = vhd.project.hlp_format_msg
+	    Message.send_to_person(vhd, @send_info)
       end
     end
 
     def handle_req(vhd, message_words)
       if check_req_format(message_words)
-	patient = create_patient_for_vhd(vhd, message_words)
-	kase = Case.new_case_from_vhd(vhd, patient)
-	[@save_info, @send_info].each { |h| h[:case] = kase }
-	Message.save_from_person(vhd, @save_info)
-	Pm.notify("req", kase)
-	doctors_to_page = vhd.project.get_doctors_to_page(kase)
-	doctors_to_page.each { |d| d.page(kase) }
+	    patient = create_patient_for_vhd(vhd, message_words)
+	    kase = Case.new_case_from_vhd(vhd, patient)
+	    [@save_info, @send_info].each { |h| h[:case] = kase }
+	    Message.save_from_person(vhd, @save_info)
+	    Pm.notify("req", kase)
+	    doctors_to_page = vhd.project.get_doctors_to_page(kase)
+	    doctors_to_page.each { |d| d.page(kase) }
       else
         Message.save_from_person(vhd, @save_info)
-	@send_info[:msg] = vhd.project.req_format_msg
-	Message.send_to_person(vhd, @send_info)
+	    @send_info[:msg] = vhd.project.req_format_msg
+	    Message.send_to_person(vhd, @send_info)
       end
       vhd.update_attributes(:status => "vacant")
     end
@@ -190,79 +224,83 @@ class MessagesController < ApplicationController
     def handle_text_from_doctor(doctor, message_words)
       if message_words[0].match(/acc/i)
         if message_words[1].nil?
-	  handle_acc_without_letter(doctor)
-	else
-	  letter = message_words[1].first.upcase
-	  handle_acc_with_letter(doctor, letter)
-	end
+	      handle_acc_without_letter(doctor)
+	    else
+	      letter = message_words[1].first.upcase
+	      handle_acc_with_letter(doctor, letter)
+	    end
       elsif message_words[0].match(/fin/i)
         handle_fin(doctor, message_words)
       else
-	# TODO: make work with VHD scribed
+        # TODO: make work with VHD scribed
         unless doctor.current_case.nil?
-	  kase = doctor.current_case
-	  [@save_info, @send_info].each { |h| h[:case] = kase }
-	  Message.save_from_person(doctor, @save_info)
-	  message_for_vhd = [ "For patient", kase.patient.name, ":", 
-	    Code.expand(@save_info[:msg]), ":" , "Dr.", doctor.name, 
-	    doctor.mobile ].compact.join(" ")
-	  @send_info.delete(:to_number)
-	  @send_info[:msg] = kase.fin_for_vhd
-	  Message.send_to_person(kase.vhd, @send_info)
-	else
-	  Message.save_from_person(doctor, @save_info)
-	end
+	      kase = doctor.current_case
+	      [@save_info, @send_info].each { |h| h[:case] = kase }
+	      Message.save_from_person(doctor, @save_info)
+	      message_for_vhd = [ "For patient", kase.patient.name, ":", 
+	        Code.expand(@save_info[:msg]), ":" , "Dr.", doctor.name, 
+	        doctor.mobile ].compact.join(" ")
+	      @send_info.delete(:to_number)
+	      @send_info[:msg] = kase.fin_for_vhd
+	      Message.send_to_person(kase.vhd, @send_info)
+	    else
+	      Message.save_from_person(doctor, @save_info)
+	    end
       end
     end
 
     def handle_acc_without_letter(doctor)
       kase = doctor.next_open_case
       unless kase.nil?
-	Message.save_from_person(doctor, @save_info.merge(:case => kase))
-	kase.handle_case_with_acc(doctor)
+	    Message.save_from_person(doctor, @save_info.merge(:case => kase))
+	    kase.handle_case_with_acc(doctor)
       else
         Message.save_from_person(doctor, @save_info)
-	response = [ "Sorry Dr. #{doctor.last_name}.", 
-	  "No cases are available at this time." ].join(" ")
-	Message.send_to_person(doctor, @send_info.merge(:msg => response))
+	    response = [ "Sorry Dr. #{doctor.last_name}.", 
+	      "No cases are available at this time." ].join(" ")
+	    Message.send_to_person(doctor, @send_info.merge(:msg => response))
       end
     end
 
     def handle_acc_with_letter(doctor, letter)
       kase = doctor.case_on_letter(letter)
       unless kase.nil?
-	[@save_info, @send_info].each { |h| h[:case] = kase }
-	Message.save_from_person(doctor, @save_info)
+	    [@save_info, @send_info].each { |h| h[:case] = kase }
+	    Message.save_from_person(doctor, @save_info)
         if kase.status != "opened"
-	  response = [ "Sorry Dr. #{doctor.last_name}.", 
-	    kase.unavailable_response, doctor.acc_options ].compact.join(" ")
-	  Message.send_to_person(doctor, @send_info.merge(:msg => response))
-	else
-	  kase.handle_case_with_acc(doctor)
-	end
+	      response = [ "Sorry Dr. #{doctor.last_name}.", 
+	      kase.unavailable_response, doctor.acc_options ].compact.join(" ")
+	      Message.send_to_person(doctor, @send_info.merge(:msg => response))
+	    else
+	      kase.handle_case_with_acc(doctor)
+	    end
       else
-	Message.save_from_person(doctor, @save_info)
-	response = [ "Sorry Dr. #{doctor.last_name}.", 
-	  "That case does not exist.", doctor.acc_options ].compact.join(" ")
-	Message.send_to_person(doctor, @send_info.merge(:msg => response))
+	    Message.save_from_person(doctor, @save_info)
+	    response = [ "Sorry Dr. #{doctor.last_name}.", 
+	      "That case does not exist.", doctor.acc_options ].compact.join(" ")
+	    Message.send_to_person(doctor, @send_info.merge(:msg => response))
       end
     end
 
     def handle_fin(doctor, message_words)
       kase = doctor.current_case
       unless kase.nil?
-	[@save_info, @send_info].each { |h| h[:case] = kase }
+        if kase.vhd.is_patient_buyer
+          old_buyer_count = kase.vhd.buyer_count
+          kase.vhd.update_attributes(:buyer_count => old_buyer_count - 1)
+        end
+	    [@save_info, @send_info].each { |h| h[:case] = kase }
         Message.save_from_person(doctor, @save_info)
-	# TODO: check for an exact repeat req sms
-	@send_info.delete(:to_number)
-	@send_info[:msg] = kase.fin_for_vhd
-	Message.send_to_person(kase.vhd, @send_info)
-	Pm.notify("fin", kase)
-	kase.resolve
-	doctor.update_attributes(:status => "available")
+	    # TODO: check for an exact repeat req sms
+	    @send_info.delete(:to_number)
+	    @send_info[:msg] = kase.fin_for_vhd
+	    Message.send_to_person(kase.vhd, @send_info)
+	    Pm.notify("fin", kase)
+	    kase.resolve
+	    doctor.update_attributes(:status => "available")
       else
         Message.save_from_person(doctor, @save_info)
-	doctor.update_attributes(:status => "available")
+	    doctor.update_attributes(:status => "available")
       end
     end
 
