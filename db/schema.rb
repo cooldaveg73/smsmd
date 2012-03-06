@@ -235,18 +235,6 @@ ActiveRecord::Schema.define(:version => 20120302061019) do
     t.string   "hlp_format_msg",        :limit => 1024
   end
 
-  create_table "promoters", :force => true do |t|
-    t.string   "name",         :limit => 128
-    t.string   "organization", :limit => 32
-    t.string   "industry",     :limit => 32
-    t.string   "country",      :limit => 32
-    t.string   "website",      :limit => 1024
-    t.string   "email",        :limit => 128
-    t.string   "username",     :limit => 24
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "shifts", :force => true do |t|
     t.integer  "start_hour"
     t.integer  "start_minute"
