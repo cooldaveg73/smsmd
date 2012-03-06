@@ -29,16 +29,17 @@ class Doctor < ActiveRecord::Base
   has_many :vhds,		:dependent => :nullify
   has_many :shifts,		:dependent => :destroy
   has_many :from_messages,	:class_name => "Message", :as => :from_person,
-  				:dependent => :restrict
+                            :dependent => :restrict
   has_many :to_messages,	:class_name => "Message", :as => :to_person,
-  				:dependent => :restrict
+                            :dependent => :restrict
 
   validates :first_name,	:length => { :maximum => 20 }, :presence => true
   validates :last_name, 	:length => { :maximum => 20 }, :presence => true
   validates :mobile, 		:length => { :maximum => 20 }, :presence => true
   validates :status, 		:length => { :maximum => 24 },
-				:inclusion => { :in => DOCTOR_STATI }
-  validates :project,		:presence => true
+                            :inclusion => { :in => DOCTOR_STATI }
+  # TODO: think more about this validation
+  # validates :project,		:presence => true
   validates :specialty, 	:length => { :maximum => 20 }
   validates :last_paged,	:presence => true
 

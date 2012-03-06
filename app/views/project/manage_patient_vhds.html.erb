@@ -5,6 +5,9 @@
 
 <% content_for :body do %>
   <br />
+  <% if @message != "" %>
+    <center><h3><%= @message %></h3></center>
+  <% end %>
   <table>
     <tr><td colspan="3"><%= link_to "... Add Patient Buyer", :action => 'new', :type => "VHD", :patient_buyer => true %></td></tr>
   <% @patient_buyers.each do |v| %>

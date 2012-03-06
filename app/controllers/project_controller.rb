@@ -21,17 +21,21 @@ class ProjectController < ApplicationController
     case params[:type].to_s.upcase
       when "VHD"
 	    @vhd = Vhd.find_by_id(id)
-	    @vhd.update_attributes(:status => "deleted")
+	    @vhd.update_attributes(:status => "deleted", :project => nil)
 	    if @vhd.save
-	      @message = "VHD #{@vhd.name} deleted!"
+	      @message = "VHD #{@vhd.full_name} deleted!"
 	    else
 	      @message = "VHD not deleted."
 	    end
+        if @vhd.is_patient_buyer
+          redirect_to :action => :manage_patient_vhds, :message => @message
+          return
+        end
       when "DOCTOR"
         @doctor = Doctor.find_by_id(id)
-        @doctor.update_attributes(:status => "deleted")
+        @doctor.update_attributes(:status => "deleted", :project => nil)
 	    if @doctor.save
-	      @message = "Doctor #{@doctor.name} deleted!"
+	      @message = "Doctor #{@doctor.full_name} deleted!"
 	    else
 	      @message = "Doctor not deleted."
 	    end
@@ -47,15 +51,19 @@ class ProjectController < ApplicationController
 	    @vhd = Vhd.find_by_id(id)
 	    @vhd.update_attributes(:status => "vacant")
 	    if @vhd.save
-	      @message = "VHD #{@vhd.name} activated!"
+	      @message = "VHD #{@vhd.full_name} activated!"
 	    else
 	      @message = "VHD not activated."
 	    end
+        if @vhd.is_patient_buyer
+          redirect_to :action => :manage_patient_vhds, :message => @message
+          return
+        end
       when "DOCTOR"
         @doctor = Doctor.find_by_id(id)
         @doctor.update_attributes(:status => "available")
 	    if @doctor.save
-	      @message = "Doctor #{@doctor.name} activated!"
+	      @message = "Doctor #{@doctor.full_name} activated!"
 	    else
 	      @message = "Doctor not activated."
 	    end
@@ -63,7 +71,7 @@ class ProjectController < ApplicationController
         @pm = Pm.find_by_id(id)
         @pm.update_attributes(:active => true)
         if @pm.save
-          @message = "PM #{@pm.name} activated!"
+          @message = "PM #{@pm.full_name} activated!"
         else
           @message = "PM not activated"
         end
@@ -79,15 +87,19 @@ class ProjectController < ApplicationController
 	    @vhd = Vhd.find_by_id(id)
 	    @vhd.update_attributes(:status => "deactivated")
 	    if @vhd.save
-	      @message = "VHD #{@vhd.name} deactivated!"
+	      @message = "VHD #{@vhd.full_name} deactivated!"
 	    else
 	      @message = "VHD not deactivated."
 	    end
+        if @vhd.is_patient_buyer
+          redirect_to :action => :manage_patient_vhds, :message => @message
+          return
+        end
       when "DOCTOR"
         @doctor = Doctor.find_by_id(id)
         @doctor.update_attributes(:status => "deactivated")
 	    if @doctor.save
-	      @message = "Doctor #{@doctor.name} deactivated!"
+	      @message = "Doctor #{@doctor.full_name} deactivated!"
 	    else
 	      @message = "Doctor not deactivated."
 	    end
@@ -95,7 +107,7 @@ class ProjectController < ApplicationController
         @pm = Pm.find_by_id(id)
         @pm.update_attributes(:active => false)
         if @pm.save
-          @message = "PM #{@pm.name} deactivated!"
+          @message = "PM #{@pm.full_name} deactivated!"
         else
           @message = "PM not deactivated"
         end
@@ -129,18 +141,22 @@ class ProjectController < ApplicationController
       when "VHD"
 	    @vhd = Vhd.find_by_id(id)
 	    @vhd.update_attributes(params[:vhd])
-	    @title = "Edit VHD #{@vhd.name}"
+	    @title = "Edit VHD #{@vhd.full_name}"
 	    if @vhd.save
-	      @message = "VHD #{@vhd.name} updated!"
+	      @message = "VHD #{@vhd.full_name} updated!"
 	    else
 	      @message = "VHD NOT updated."
 	    end
+        if @vhd.is_patient_buyer
+          redirect_to :action => :manage_patient_vhds, :message => @message
+          return
+        end
       when "DOCTOR"
         @doctor = Doctor.find_by_id(id)
         @doctor.update_attributes(params[:doctor])
-        @title = "Edit Doctor #{@doctor.name}"
+        @title = "Edit Doctor #{@doctor.full_name}"
 	    if @doctor.save
-	      @message = "Doctor #{@doctor.name} updated!"
+	      @message = "Doctor #{@doctor.full_name} updated!"
 	    else
 	      @message = "Doctor NOT updated."
 	    end
@@ -148,7 +164,7 @@ class ProjectController < ApplicationController
         @title = "Nothing Edited"
         @message = "You did not edit anything"
     end
-    render 'show'
+    redirect_to :action => :settings, :message => @message
   end
 
   def create
@@ -159,11 +175,14 @@ class ProjectController < ApplicationController
         attr = { :status => "vacant", :project => project }
         vhd = Vhd.create(params[:vhd].merge(attr))
         if vhd.valid?
-          @message = "New VHD #{vhd.name} saved!"
+          @message = "New VHD #{vhd.full_name} saved!"
         else
           @message = "New VHD NOT saved."
         end
-        @title = "Add VHD"
+        if vhd.is_patient_buyer
+          redirect_to :action => :manage_patient_vhds, :message => @message
+          return
+        end
       when "DOCTOR"
         attr = { :active => true, :status => "available", :project => project,
             :last_paged => DateTime.now.new_offset(+5.5/24) }
@@ -172,13 +191,12 @@ class ProjectController < ApplicationController
           Shift.create(:start_hour => 0, :start_minute => 0,
            :start_second => 0, :end_hour => 23,
            :end_minute => 59, :end_second => 59, :doctor => doctor )
-          @message = "New Doctor #{doctor.name} saved!"
+          @message = "New Doctor #{doctor.full_name} saved!"
         else
 	      @message = "New Doctor NOT saved."
 	    end
-	    @title = "Add Doctor"
-      end
-    render 'show'
+    end
+    redirect_to :action => :settings, :message => @message
   end
 
   def new
@@ -210,8 +228,9 @@ class ProjectController < ApplicationController
 
   def manage_patient_vhds
     project = get_project_and_set_subtitle
+    @message = params[:message] || ""
     @title = "Manage Patient VHDs"
-    @patient_buyers = project.vhds.where("is_patient_buyer = ?", true)
+    @patient_buyers = project.vhds.where("is_patient_buyer = ? AND status != ?", true, "deleted")
     user = User.find_by_id(session[:user_id])
     @is_admin = user.is_admin || false
   end

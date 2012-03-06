@@ -38,7 +38,8 @@ class Vhd < ActiveRecord::Base
   validates :first_name, 	:length => { :maximum => 20 }, :presence => true
   validates :last_name, 	:length => { :maximum => 20 }, :presence => true
   validates :mobile, 		:length => { :maximum => 20 }, :presence => true
-  validates :project,		:presence => true
+  # TODO: think more about this validation
+  # validates :project,		:presence => true
   validates :status, 		:length => { :maximum => 24 },
   				:inclusion => { :in => VHD_STATI }
   validates :notes, 		:length => { :maximum => 1024 }
