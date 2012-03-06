@@ -27,6 +27,8 @@ Mh::Application.routes.draw do
   match "/project/new", 	:to => "project#new"
   match "/project/edit", 	:to => "project#edit"
   match "/project/destroy", 	:to => "project#destroy"
+  match "/project/reactivate",  :to => "project#deactivate"
+  match "/project/activate",    :to => "project#activate"
   match "/project/manage_patient_vhds", :to => "project#manage_patient_vhds"
 
   get "cases/main"

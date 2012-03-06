@@ -5,8 +5,9 @@ class ProjectController < ApplicationController
     user = User.find_by_id(session[:user_id])
     get_title(project)
 
-    @vhds = project.vhds
-    @doctors = project.doctors
+    @message = params[:message] || ""
+    @vhds = project.vhds.where("status != ?", "deleted")
+    @doctors = project.doctors("status != ?", "deleted")
     @pms = project.pms
     @users = project.users
     @apms = project.apms
@@ -16,36 +17,108 @@ class ProjectController < ApplicationController
 
   def destroy
     get_title
-    @title = "Destroy #{person_type}"
     id = params[:id].to_i
     case params[:type].to_s.upcase
       when "VHD"
-
+	    @vhd = Vhd.find_by_id(id)
+	    @vhd.update_attributes(:status => "deleted")
+	    if @vhd.save
+	      @message = "VHD #{@vhd.name} deleted!"
+	    else
+	      @message = "VHD not deleted."
+	    end
       when "DOCTOR"
-
+        @doctor = Doctor.find_by_id(id)
+        @doctor.update_attributes(:status => "deleted")
+	    if @doctor.save
+	      @message = "Doctor #{@doctor.name} deleted!"
+	    else
+	      @message = "Doctor not deleted."
+	    end
     end
-    render 'temp'
- #   redirect_to '/project/settings'
+    redirect_to :action => :settings, :message => @message
+  end
+
+  def activate
+    get_title
+    id = params[:id].to_i
+    case params[:type].to_s.upcase
+      when "VHD"
+	    @vhd = Vhd.find_by_id(id)
+	    @vhd.update_attributes(:status => "vacant")
+	    if @vhd.save
+	      @message = "VHD #{@vhd.name} activated!"
+	    else
+	      @message = "VHD not activated."
+	    end
+      when "DOCTOR"
+        @doctor = Doctor.find_by_id(id)
+        @doctor.update_attributes(:status => "available")
+	    if @doctor.save
+	      @message = "Doctor #{@doctor.name} activated!"
+	    else
+	      @message = "Doctor not activated."
+	    end
+      when "PM"
+        @pm = Pm.find_by_id(id)
+        @pm.update_attributes(:active => true)
+        if @pm.save
+          @message = "PM #{@pm.name} activated!"
+        else
+          @message = "PM not activated"
+        end
+    end
+    redirect_to :action => :settings, :message => @message
+  end
+
+  def deactivate
+    get_title
+    id = params[:id].to_i
+    case params[:type].to_s.upcase
+      when "VHD"
+	    @vhd = Vhd.find_by_id(id)
+	    @vhd.update_attributes(:status => "deactivated")
+	    if @vhd.save
+	      @message = "VHD #{@vhd.name} deactivated!"
+	    else
+	      @message = "VHD not deactivated."
+	    end
+      when "DOCTOR"
+        @doctor = Doctor.find_by_id(id)
+        @doctor.update_attributes(:status => "deactivated")
+	    if @doctor.save
+	      @message = "Doctor #{@doctor.name} deactivated!"
+	    else
+	      @message = "Doctor not deactivated."
+	    end
+      when "PM"
+        @pm = Pm.find_by_id(id)
+        @pm.update_attributes(:active => false)
+        if @pm.save
+          @message = "PM #{@pm.name} deactivated!"
+        else
+          @message = "PM not deactivated"
+        end
+    end
+    redirect_to :action => :settings, :message => @message
   end
 
   def edit
-    get_title
+    project = get_project_and_set_subtitle
     @action = "update"
     @submit = "Update"
     id = params[:id].to_i
     case params[:type].to_s.upcase
       when "VHD"
         @vhd = Vhd.find_by_id(id)
-	@phcs = @vhd.project.phcs
-	vhd_name = [@vhd.first_name, @vhd.last_name].join(' ')
-        @title = "Edit VHD #{vhd_name}"
-	render 'edit_vhd'
+        @is_patient_buyer = @vhd.is_patient_buyer && project.has_patient_buyers
+    	@phcs = @vhd.project.phcs
+        @title = "Edit VHD #{@vhd.full_name}"
+    	render 'edit_vhd'
       when "DOCTOR"
         @doctor = Doctor.find_by_id(id)
-	doctor_name = [@doctor.first_name, @doctor.last_name].join(' ')
-        @title = "Edit Doctor #{doctor_name}"
-	render 'edit_doctor'
-      when "APM"
+        @title = "Edit Doctor #{@doctor.full_name}"
+    	render 'edit_doctor'
     end
   end
 
@@ -54,23 +127,26 @@ class ProjectController < ApplicationController
     id = params[:id].to_i
     case params[:type].to_s.upcase
       when "VHD"
-	@vhd = Vhd.find_by_id(id)
-	@vhd.update_attributes(params[:vhd])
-	@title = "Edit VHD #{@vhd.name}"
-	if @vhd.save
-	  @message = "VHD #{@vhd.name} updated!"
-	else
-	  @message = "VHD NOT updated."
-	end
+	    @vhd = Vhd.find_by_id(id)
+	    @vhd.update_attributes(params[:vhd])
+	    @title = "Edit VHD #{@vhd.name}"
+	    if @vhd.save
+	      @message = "VHD #{@vhd.name} updated!"
+	    else
+	      @message = "VHD NOT updated."
+	    end
       when "DOCTOR"
         @doctor = Doctor.find_by_id(id)
-	@doctor.update_attributes(params[:doctor])
+        @doctor.update_attributes(params[:doctor])
         @title = "Edit Doctor #{@doctor.name}"
-	if @doctor.save
-	  @message = "Doctor #{@doctor.name} updated!"
-	else
-	  @message = "Doctor NOT updated."
-	end
+	    if @doctor.save
+	      @message = "Doctor #{@doctor.name} updated!"
+	    else
+	      @message = "Doctor NOT updated."
+	    end
+      else
+        @title = "Nothing Edited"
+        @message = "You did not edit anything"
     end
     render 'show'
   end
@@ -80,41 +156,49 @@ class ProjectController < ApplicationController
     get_title(project)
     case(params[:type].to_s.upcase)
       when "VHD"
-	attr = { :status => "vacant", :project => project }
-	vhd = Vhd.create(params[:vhd].merge(attr))
-	if vhd.valid?
-	  @message = "New VHD #{vhd.name} saved!"
-	else
-	  @message = "New VHD NOT saved."
-	end
-	@title = "Add VHD"
+        attr = { :status => "vacant", :project => project }
+        vhd = Vhd.create(params[:vhd].merge(attr))
+        if vhd.valid?
+          @message = "New VHD #{vhd.name} saved!"
+        else
+          @message = "New VHD NOT saved."
+        end
+        @title = "Add VHD"
       when "DOCTOR"
-	attr = { :active => true, :status => "available", :project => project,
-	         :last_paged => DateTime.now.new_offset(+5.5/24) }
+        attr = { :active => true, :status => "available", :project => project,
+            :last_paged => DateTime.now.new_offset(+5.5/24) }
         doctor = Doctor.create( params[:doctor].merge( attr ))
-	if doctor.valid?
-	  Shift.create(:start_hour => 0, :start_minute => 0,
-	   :start_second => 0, :end_hour => 23,
-	   :end_minute => 59, :end_second => 59, :doctor => doctor )
-	  @message = "New Doctor #{doctor.name} saved!"
-	else
-	  @message = "New Doctor NOT saved."
-	end
-	@title = "Add Doctor"
-    end
+        if doctor.valid?
+          Shift.create(:start_hour => 0, :start_minute => 0,
+           :start_second => 0, :end_hour => 23,
+           :end_minute => 59, :end_second => 59, :doctor => doctor )
+          @message = "New Doctor #{doctor.name} saved!"
+        else
+	      @message = "New Doctor NOT saved."
+	    end
+	    @title = "Add Doctor"
+      end
     render 'show'
   end
 
   def new
     get_title
+    project = get_project_and_set_subtitle
     @submit = 'Create'
     @action = 'create'
     person_type = params[:type]
     case params[:type].to_s.upcase
       when "VHD"
-        @vhd = Vhd.new
-        @title = "Add VHD"
-	    @phcs = Project.find_by_id(session[:project_id]).phcs
+        if params[:patient_buyer] == "true" && project.has_patient_buyers
+          @vhd = Vhd.new(:buyer_count => 10, :is_patient => true, :is_patient_buyer => true)
+          @is_patient_buyer = true
+          @title = "Add Patient Buyer VHD"
+        else
+          @vhd = Vhd.new
+          @is_patient_buyer = false
+          @title = "Add VHD"
+        end
+	    @phcs = project.phcs
 	    render 'edit_vhd'
       when "DOCTOR"
         @doctor = Doctor.new
@@ -128,16 +212,10 @@ class ProjectController < ApplicationController
     project = get_project_and_set_subtitle
     @title = "Manage Patient VHDs"
     @patient_buyers = project.vhds.where("is_patient_buyer = ?", true)
-    @vhd = Vhd.new
+    user = User.find_by_id(session[:user_id])
+    @is_admin = user.is_admin || false
   end
 
-  def edit_patient_vhd
-    # TODO: 
-  end
-  
-  def deactivate
-    # TODO:
-  end
 
   def doctor_demo
     @title = "Doctor Demo"

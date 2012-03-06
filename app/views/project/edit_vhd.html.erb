@@ -1,9 +1,13 @@
 <% content_for :body do %>
+  <br />
 
   <%= form_for :vhd, @vhd, :url => { :action => @action } do |f| %>
     
     <%= hidden_field_tag :id, @vhd.id %>
     <%= hidden_field_tag :type, "VHD" %>
+    <%= f.hidden_field :buyer_count, :value => @vhd.buyer_count %>
+    <%= f.hidden_field :is_patient, :value => @vhd.is_patient %>
+    <%= f.hidden_field :is_patient_buyer, :value => @vhd.is_patient_buyer %>
 
     <div class="field">
       <%= f.label "First name" %><br />
@@ -19,6 +23,13 @@
       <%= f.label "Phone number" %><br />
       <%= f.text_field :mobile %>
     </div>
+
+    <% if @is_patient_buyer %>
+      <div class="field">
+        <%= f.label "Patient Buyer Count" %><br />
+        <%= f.text_field :buyer_count %>
+      </div>
+    <% end %>
 
     <div class="field">
       <%= f.label "Village name" %><br />
