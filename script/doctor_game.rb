@@ -17,6 +17,8 @@ dropped_points = -4
 default_stamp = Time.utc(2011, 8, 15, 3).to_datetime
 #####################################################
 
+# TODO: add in code to make it only where the condition for running this
+# script is if the has_doctor_game = true flag is set
 
 # Task: Generate the updated data for the message
 query = "status NOT IN ('deactivated','deleted')"

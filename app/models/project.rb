@@ -19,6 +19,7 @@
 #  has_patient_buyers    :boolean(1)
 #  has_doctor_game       :boolean(1)
 #  hlp_format_msg        :string(1024)
+#  has_ans               :boolean(1)
 #
 
 class Project < ActiveRecord::Base
