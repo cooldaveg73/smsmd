@@ -141,7 +141,13 @@ class MessagesController < ApplicationController
     end
 
     def handle_text_from_vhd(vhd, message_words)
-      if vhd.is_patient
+      if vhd.status == "deleted"
+        # TODO: send an appropriate message
+        Message.save_from_person(vhd, @save_info)
+      elsif vhd.status == "deactivated"
+        # TODO: send an appropriate message
+        Message.save_from_person(vhd, @save_info)
+      elsif vhd.is_patient
         handle_text_from_patient_vhd(vhd, message_words)
       elsif message_words[0].match(/req/i) && vhd.project.has_reqs
         handle_req(vhd, message_words)
@@ -222,7 +228,13 @@ class MessagesController < ApplicationController
     end
 
     def handle_text_from_doctor(doctor, message_words)
-      if message_words[0].match(/acc/i)
+      if doctor.status == "deleted"
+        # TODO: send an appropriate message
+        Message.save_from_person(doctor, @save_info)
+      elsif doctor.status == "deactivated"
+        # TODO: send an appropriate message
+        Message.save_from_person(doctor, @save_info)
+      elsif message_words[0].match(/acc/i)
         if message_words[1].nil?
 	      handle_acc_without_letter(doctor)
 	    else
