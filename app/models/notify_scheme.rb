@@ -11,7 +11,7 @@
 #
 
 class NotifyScheme < ActiveRecord::Base
-  ALERT_TYPES = ["acc", "req", "fin", "alert"]
+  ALERT_TYPES = ["acc", "req", "fin", "alert", "hlp"]
   belongs_to :project
   belongs_to :pm
 

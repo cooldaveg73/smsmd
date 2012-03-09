@@ -95,7 +95,7 @@ class Case < ActiveRecord::Base
     return "Another doctor is working on this case." if status == "scribed"
   end
 
-  def self.new_case_from_vhd(vhd, patient)
+  def self.new_case_from_vhd(vhd, patient=nil)
     create(:status => "opened", :vhd => vhd, :patient => patient, 
       :time_opened => DateTime.now.new_offset(0), :project => vhd.project,
       :tag => vhd.project.cases.count + 1)
@@ -108,6 +108,11 @@ class Case < ActiveRecord::Base
   def opening_message
     return nil if messages.empty?
     return messages.order("time_received_or_sent, id").first
+  end
+
+  def hlp_for_pm
+    return ["From VHD", vhd.name, vhd.mobile + ":", 
+      opening_message.msg, "- case #{tag}"].join(" ")
   end
 
   def req_for_pm

@@ -12,6 +12,11 @@
 #  username     :string(24)
 #  created_at   :datetime
 #  updated_at   :datetime
+<<<<<<< HEAD
+=======
+#  key          :string(1024)
+#  project_id   :integer(4)
+>>>>>>> master
 #
 
 require 'spec_helper'

@@ -16,6 +16,10 @@
 #  req_format_msg        :string(1024)    default("Sorry, wrong format. Please re-send in this way: REQ (patient good name) (patient surname) (patient age (40y, A, C, I, E, P)) (patient mobile) (patient symptoms)")
 #  time_zone             :decimal(3, 1)
 #  location              :string(24)
+#  has_patient_buyers    :boolean(1)
+#  has_doctor_game       :boolean(1)
+#  hlp_format_msg        :string(1024)
+#  has_ans               :boolean(1)
 #
 
 require 'spec_helper'

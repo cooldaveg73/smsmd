@@ -1,0 +1,37 @@
+<% content_for :custom_scripts do %>
+  <%= javascript_include_tag 'jquery-1.6.js' %>
+  <%= javascript_include_tag 'delete_user_confirmer' %>
+<% end %>
+
+<% content_for :body do %>
+  <br />
+  <% if @message != "" %>
+    <center><h3><%= @message %></h3></center>
+  <% end %>
+  <table>
+    <tr><td colspan="3"><%= link_to "... Add Patient Buyer", :action => 'new', :type => "VHD", :patient_buyer => true %></td></tr>
+  <% @patient_buyers.each do |v| %>
+  <tr>
+    <td>
+      <%= link_to v.full_name, :controller => :messages, :action => :messages,
+        :person_id => v.id, :person_type => v.class.to_s %>
+    </td>
+    <% if @is_admin %>
+      <td></td><td></td><td></td>
+	  <td><%= link_to "Edit", :action => 'edit', :type => "VHD", 
+	          :id => v.id %></td>
+      <% if v.status == "deactivated" %>
+        <td><%= link_to "Activate", :action => 'activate', :type => "VHD",
+                :id => v.id %></td>
+      <% else %>
+        <td><%= link_to "Deactivate", :action => 'deactivate', :type => "VHD",
+                :id => v.id %></td>
+      <% end %>
+      <td><a href="/project/destroy?id=<%= v.id %>&type=VHD" class="user_destroyer">Delete</a></td>
+	<% end %>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;SMS Count: <%= v.buyer_count %></td>
+  </tr>
+
+  <% end %>
+  </table>
+<% end %>

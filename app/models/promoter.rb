@@ -12,6 +12,8 @@
 #  username     :string(24)
 #  created_at   :datetime
 #  updated_at   :datetime
+#  key          :string(1024)
+#  project_id   :integer(4)
 #
 
 class Promoter < ActiveRecord::Base

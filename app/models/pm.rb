@@ -32,13 +32,15 @@ class Pm < ActiveRecord::Base
   def name; [first_name, last_name].join(" "); end;
   def full_name; [first_name, last_name].join(" "); end;
 
-  # notify scheme types: [ "acc", "req", "fin", "alert" ]
+  # notify scheme types: [ "acc", "req", "fin", "alert", "hlp" ]
   def self.notify(type, kase)
     kase.project.pms.each do |pm|
-      query = "pm_id = ? AND alert_type = ? AND active = ?", pm.id, type, true
-      unless kase.project.notify_schemes.where(*query).blank?
-	send_info = { :msg => kase.send("#{type}_for_pm"), :case => kase }
-	Message.send_to_person(pm, send_info)
+      if pm.active
+        query = "pm_id = ? AND alert_type = ?", pm.id, type
+        unless kase.project.notify_schemes.where(*query).blank?
+          send_info = { :msg => kase.send("#{type}_for_pm"), :case => kase }
+          Message.send_to_person(pm, send_info)
+        end
       end
     end
   end

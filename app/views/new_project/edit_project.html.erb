@@ -11,7 +11,7 @@
     <h3>Add Users</h3>
     <% User.all.each do |user| %>
       <div class="check_box_field">
-	<%= f.check_box "#{user.id}" %>
+	    <%= f.check_box "#{user.id}" %>
         <%= f.label user.name %>
       </div>
     <% end %>

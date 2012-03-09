@@ -2,18 +2,23 @@
   <%= stylesheet_link_tag 'base.css' %>
   <%= stylesheet_link_tag 'tables.css' %>
   <%= stylesheet_link_tag 'custom.css' %>
+  <%= javascript_include_tag 'jquery-1.6.js' %>
+  <%= javascript_include_tag 'delete_user_confirmer' %>
 <% end %>
 
 <% content_for :body do %>
   <br />
+  <p><%= button_to "Manage Patient VHDs", "/project/manage_patient_vhds", :style => "margin-left: 100px;" %></p>
   <p><%= button_to ">>>>>   Demo   <<<<<", "/demo", :style => "margin-left: 100px;" %></p>
-  <br />
+  <% if @message != "" %>
+    <center><h3><%= @message %></h3></center>
+  <% end %>
 
   <table class="horizontal">
      <thead class="casesHead" id="cases">
-       <tr><th colspan="3">VHD Name</th></tr>
+       <tr><th colspan="4">VHD Name</th></tr>
      </thead>
-      <tr><td colspan="3">
+      <tr><td colspan="4">
 	<%= link_to "... Add VHD", :action => 'new', :type => "VHD" %>
       </td></tr>
     <% @vhds.each do |v| %>
@@ -27,8 +32,14 @@
 	  <% if @is_admin %>
 	    <td><%= link_to "Edit", :action => 'edit', :type => "VHD", 
 	            :id => v.id %></td>
-	    <td><%= link_to "Delete", :action => 'destroy', :type => "VHD", 
-	            :id => v.id %> </td>
+        <% if v.status == "deactivated" %>
+          <td><%= link_to "Activate", :action => 'activate', :type => "VHD",
+                  :id => v.id %></td>
+        <% else %>
+          <td><%= link_to "Deactivate", :action => 'deactivate', :type => "VHD",
+                  :id => v.id %></td>
+        <% end %>
+        <td><a href="/project/destroy?id=<%= v.id %>&type=VHD" class="user_destroyer">Delete</a></td>
 	  <% end %>
 	</tr>
     <% end %>
@@ -37,9 +48,9 @@
 
   <table class="horizontal">
      <thead class="casesHead" id="cases">
-       <tr><th colspan="3">Doctor Name</th></tr>
+       <tr><th colspan="4">Doctor Name</th></tr>
      </thead>
-      <tr><td colspan="3">
+      <tr><td colspan="4">
 	<%= link_to "... Add Doctor", :action => 'new', :type => "Doctor" %>
       </td></tr>
     <% @doctors.each do |d| %>
@@ -53,13 +64,18 @@
 	  <% if @is_admin %>
 	    <td><%= link_to "Edit", :action => 'edit', :type => "Doctor", 
 	            :id => d.id %></td>
-	    <td><%= link_to "Delete", :action => 'destroy', :type => "Doctor", 
-	            :id => d.id %> </td>
+        <% if d.status == "deactivated" %>
+          <td><%= link_to "Activate", :action => 'activate', :type => "Doctor",
+                  :id => d.id %></td>
+        <% else %>
+          <td><%= link_to "Deactivate", :action => 'deactivate', 
+                  :type => "Doctor", :id => d.id %></td>
+        <% end %>
+        <td><a href="/project/destroy?id=<%= d.id %>&type=Doctor" class="user_destroyer">Delete</a></td>
 	  <% end %>
 	</tr>
     <% end %>
   </table>
-
 
   <table class="horizontal">
      <thead class="casesHead" id="cases">
@@ -72,6 +88,15 @@
 		:action => :messages, :person_id => p.id,
 		:person_type => p.class.to_s %>
 	  </td>
+	  <% if @is_admin %>
+        <% if p.active %>
+          <td><%= link_to "Deactivate", :action => 'deactivate', 
+                  :type => "Pm", :id => p.id %></td>
+        <% else %>
+          <td><%= link_to "Activate", :action => 'activate', :type => "Pm",
+                  :id => p.id %></td>
+        <% end %>
+	  <% end %>
 	</tr>
     <% end %>
   </table>
@@ -88,8 +113,4 @@
 
   <br style="clear:both;"/>
   <br />
-  <br />
-  <% if @is_admin %>
-    <%= link_to "New Project", :action => :new_project %><br />
-  <% end %>
 <% end %>

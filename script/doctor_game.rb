@@ -17,6 +17,8 @@ dropped_points = -4
 default_stamp = Time.utc(2011, 8, 15, 3).to_datetime
 #####################################################
 
+# TODO: add in code to make it only where the condition for running this
+# script is if the has_doctor_game = true flag is set
 
 # Task: Generate the updated data for the message
 query = "status NOT IN ('deactivated','deleted')"
@@ -130,9 +132,12 @@ end
                             ].join(" ")
       Message.send_to_person(doctor, {:msg => message_for_doctor})
       doctor.project.pms.each do |pm|
-        message_for_pm = [ "**NOTE**", message_for_doctor ].join(" ")
-	send_info = { :msg => message_for_pm, :project => doctor.project }
-        Message.send_to_person(pm, send_info)
+        # TODO: add this into code related to notify schemes!!!
+        unless pm.first_name == "Yashoda"
+          message_for_pm = [ "**NOTE**", message_for_doctor ].join(" ")
+      send_info = { :msg => message_for_pm, :project => doctor.project }
+          Message.send_to_person(pm, send_info)
+        end
       end
     end
   end

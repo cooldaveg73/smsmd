@@ -35,6 +35,7 @@ class SessionsController < ApplicationController
 	return
       end
     else
+      @user = user
       @projects = user.projects
     end
   end
