@@ -14,13 +14,21 @@ class MessagesController < ApplicationController
     elsif params[:person_type].match(/pm/i)
       person = Pm.find_by_id(params[:person_id])
     end
-    redirect_to :root && return if person.nil?
+    if person.nil?
+      redirect_to :root
+      return
+    end
     if person.respond_to?("project")
       authorize_project(person.project)
+      # TODO: needs to return here otherwise makes a bug
     elsif person.respond_to?("projects")
-      redirect_to :root && return unless person.projects.include?(project)
+      unless person.projects.include?(project)
+        redirect_to :root
+        return
+      end
     else
-      redirect_to :root && return
+      redirect_to :root
+      return
     end
     per_page_count = 100
     query = "((from_person_id = :id AND from_person_type = :class) OR 
@@ -173,6 +181,7 @@ class MessagesController < ApplicationController
     end
 
     def handle_hlp(vhd, message_words)
+      # the <= 0 is because the decrementing happens after the fin
       if vhd.is_patient_buyer && vhd.buyer_count <= 0
         Message.save_from_person(vhd, @save_info)
 	    @send_info[:msg] = DEFAULT_NO_POINTS_MSG
@@ -243,8 +252,8 @@ class MessagesController < ApplicationController
 	    end
       elsif message_words[0].match(/fin/i)
         handle_fin(doctor, message_words)
+      # TODO: make work with VHD scribed
       else
-        # TODO: make work with VHD scribed
         unless doctor.current_case.nil?
 	      kase = doctor.current_case
 	      [@save_info, @send_info].each { |h| h[:case] = kase }
