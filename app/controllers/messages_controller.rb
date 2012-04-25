@@ -149,7 +149,9 @@ class MessagesController < ApplicationController
     end
 
     def handle_text_from_vhd(vhd, message_words)
-      if vhd.status == "deleted"
+      if duplicate_msg(vhd, @save_info[:msg])
+        Message.save_from_person(vhd, @save_info)
+      elsif vhd.status == "deleted"
         # TODO: send an appropriate message
         Message.save_from_person(vhd, @save_info)
       elsif vhd.status == "deactivated"
@@ -202,6 +204,7 @@ class MessagesController < ApplicationController
       end
     end
 
+
     def handle_req(vhd, message_words)
       if check_req_format(message_words)
 	    patient = create_patient_for_vhd(vhd, message_words)
@@ -237,7 +240,9 @@ class MessagesController < ApplicationController
     end
 
     def handle_text_from_doctor(doctor, message_words)
-      if doctor.status == "deleted"
+      if duplicate_msg(doctor, @save_info[:msg])
+        Message.save_from_person(doctor, @save_info)
+      elsif doctor.status == "deleted"
         # TODO: send an appropriate message
         Message.save_from_person(doctor, @save_info)
       elsif doctor.status == "deactivated"
@@ -343,6 +348,19 @@ class MessagesController < ApplicationController
       else
         return true
       end
+    end
+
+    # duplicate_msg looks to see if the exact same message was sent to the
+    # the system in the last 30 minutes. In which case, we are assuming that
+    # the gateway/network is spitting that message twice (accidentally)
+    def duplicate_msg(person, msg)
+      thirty_mins_ago = 30.minutes.ago.utc.to_datetime
+      query = "from_person_id = :id AND from_person_type = :class AND msg = :msg
+        AND time_received_or_sent > :thirty_mins_ago"
+      data = { :id => person.id, :class => person.class.to_s, :msg => msg,
+        :thirty_mins_ago => thirty_mins_ago }
+      return true if Message.where(query, data).count > 0
+      return false
     end
 
 end
