@@ -21,5 +21,5 @@ class Promoter < ActiveRecord::Base
   validates :email,	:presence => true
   validates_presence_of :organization, :country
 
-  has_one :project
+  belongs_to :project
 end

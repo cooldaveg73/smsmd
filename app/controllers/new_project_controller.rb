@@ -1,4 +1,5 @@
 class NewProjectController < ApplicationController
+  include NewProjectHelper
   require 'net/http'
   skip_before_filter :authorize
 
@@ -32,13 +33,13 @@ class NewProjectController < ApplicationController
     begin
       if promoter.key == params[:key]
         User.where("is_admin = ?", true). each do |u| 
-	  PromoterMailer.admin_notification(promoter, u).deliver
-	end
-	# regenerate the key to prevent further use of the link
-	@promoter.update_attributes(:key => generate_temp_key(50))
-	redirect_to "/login", :notice => "An email was sent to an admin. Please expect a reply shortly."
-      else
-      redirect_to "/login", :notice => "The key for this promoter is expired or invalid. Please contact Mobilizing Health or retry again later."
+          PromoterMailer.admin_notification(promoter, u).deliver if u.email
+        end
+      # regenerate the key to prevent further use of the link
+      promoter.update_attributes(:key => generate_temp_key(50))
+      redirect_to "/login", :notice => "An email was sent to an admin. Please expect a reply shortly."
+        else
+        redirect_to "/login", :notice => "The key for this promoter is expired or invalid. Please contact Mobilizing Health or retry again later."
       end
     rescue
       redirect_to "/login", :notice => "There was a problem with confirming that promoter."
@@ -95,6 +96,9 @@ class NewProjectController < ApplicationController
 
   # the first step for setting up a project for anyone
   def setup1
+  end
+
+  def setup2
   end
 
 end

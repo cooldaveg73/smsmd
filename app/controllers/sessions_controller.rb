@@ -26,13 +26,13 @@ class SessionsController < ApplicationController
     user = User.find_by_id(session[:user_id])
     if user.projects.count == 1
       session[:project_id] = user.projects.first.id
-      if user.new_project == user.project.first
+      if user.new_project == user.projects.first
         user.update_attributes(:new_project => nil)
         redirect_to :controller => "new_project", :action => "setup1"
-	return
+        return
       else
         redirect_to :controller => "cases", :action => "main" 
-	return
+        return
       end
     else
       @user = user
