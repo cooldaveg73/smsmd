@@ -9,11 +9,11 @@ dropped_points = -4
 # key is doctor ===> links to :saved_timstamp, :saved_points, :patients_helped
 @doctor_hash = {}
 @prize_points = [ 250, 800, 1600, 2400, 4300 ]
-@prize_descriptions = { 250 =>	"Rs. 500 Gift Card",
-                        800 =>	"Rs. 1,200 Gift Card",
-			1600 =>	"Rs. 2,000 Gift Card",
-			2400 =>	"Rs. 3,000 Gift Card",
-			4300 =>	"Dinner at Taj Hotel Restaurant (Rs. 5000)" }
+@prize_descriptions = {
+            250 =>	"Rs. 500 Gift Card",
+            800 =>	"Rs. 1,200 Gift Card",
+			1600 =>	"Rs. 2,500 Gift Card",
+			4300 =>	"Dinner at Taj Hotel Restaurant (Rs. 5000)"  }
 default_stamp = Time.utc(2011, 8, 15, 3).to_datetime
 #####################################################
 
@@ -112,6 +112,7 @@ doctors.each do |doctor|
     else
       Message.send_to_person(doctor, {:msg => active_message(doctor)})
     end
+    # TODO: reset doctors if needed
   else
     sleep(200)
   end
