@@ -43,7 +43,7 @@ class Project < ActiveRecord::Base
   has_one :promoter
 
   validates :name,	:presence => true,
-			:length => {:maximum => 20}
+			:length => {:maximum => 35}
   validates :mobile,	:presence => true
 
   def get_doctors_to_page(kase)
