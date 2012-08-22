@@ -95,12 +95,21 @@ class MessagesController < ApplicationController
     @save_info[:to_number] = @send_info[:from_number] = dest
     @save_info[:from_number] = @send_info[:to_number] = source
     message_words = text.strip.split(/\s+/)
-    if(vhd = Vhd.find_by_mobile(source))
+    if (vhd = Vhd.find_by_mobile(source))
       [@save_info, @send_info].each { |h| h[:project] = vhd.project }
-      handle_text_from_vhd(vhd, message_words)
-    elsif(doctor = Doctor.find_by_mobile(source))
+      #XXX: temp code
+      Message.save_from_person(vhd, @save_info)
+      @send_info[:msg] = "The SMS system is temporarily closed. We are sorry for the inconvenience."
+      Message.send_to_person(vhd, @send_info)
+      vhd.update_attributes(:status => "vacant")
+      #XXX: end temp code
+      #handle_text_from_vhd(vhd, message_words)
+    elsif (doctor = Doctor.find_by_mobile(source))
       [@save_info, @send_info].each { |h| h[:project] = doctor.project }
-      handle_text_from_doctor(doctor, message_words)
+      #XXX: temp code
+      Message.save_from_person(doctor, @save_info)
+      #XXX: end temp code
+      #handle_text_from_doctor(doctor, message_words)
     else
       handle_unregistered(location)
     end
@@ -143,7 +152,10 @@ class MessagesController < ApplicationController
       end
       [@save_info, @send_info].each { |h| h[:project] = project }
       Message.save_from_person(nil, @save_info)
-      msg = (project ? project.unregistered_msg : DEFAULT_UNREGISTERED_MSG)
+      #XXX: temp code
+      msg = "The SMS system is temporarily closed. We are sorry for the inconvenience."
+      #msg = (project ? project.unregistered_msg : DEFAULT_UNREGISTERED_MSG)
+      #XXX: end temp code
       @send_info[:msg] = msg
       Message.send_to_person(nil, @send_info)
     end
