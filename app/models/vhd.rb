@@ -22,7 +22,7 @@
 #
 
 class Vhd < ActiveRecord::Base
-  VHD_STATI = %w(scribed vacant deactivated deleted)
+  VHD_STATI = %w(scribed vacant deactivated deleted medgling)
 
   belongs_to :project
   belongs_to :phc

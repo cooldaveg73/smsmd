@@ -22,6 +22,7 @@
 #
 
 require 'net/http'
+
 class Message < ActiveRecord::Base
 
   belongs_to :project
@@ -73,7 +74,34 @@ class Message < ActiveRecord::Base
     return external_id
   end
 
+  def self.req_for_medgle(vhd, save_info)
+  end
+
   private
+
+    def self.send_req_to_medgle(msg)
+      @host = 'api.medgle.com'
+      @port = 80
+      msg = URI.encode(msg)
+
+      @post_ws = [ "/smswrap.jsp?smstask=smsstart",
+        "country=India", "language=hindirom", "sms=#{msg}" ].join("&")
+      @payload = { "smstask" => "smsstart",  "country" => "India",
+          "language" => "hindirom", "sms" => msg }
+
+      req = Net::HTTP::Post.new(@post_ws, 
+         initheader = "Content-type" => "application/x-www-form-urlencoded",
+         "Accept" => "text/plain")
+      req.body = @payload
+
+      response = Net::HTTP.new(@host, @port).start { |http| http.request(req) }
+      k1, textquestion, k2, questionvalues, k3, questionvaluemap = response.body.strip.split("|").map do |item| 
+        item.strip
+      end
+      return nil if k1.nil? || k1 != "textquestion"
+      # TODO: figure out if we want to save the other info
+      return textquestion
+    end
 
     def self.rescue_send_info(person, send_info)
       m = send_info
@@ -116,15 +144,15 @@ class Message < ActiveRecord::Base
 
       @post_ws = [ "/GatewayAPI/rest?method=sendMessage", 
         "userid=#{@user}", "password=#{@pass}", "msg=#{msg}",
-	"send_to=#{dest}", "v=1.1" ].join("&")
+        "send_to=#{dest}", "v=1.1" ].join("&")
 
       @payload = { "method" => "sendMessage", "userid" => @user, 
         "password" => @pass, "msg" => msg, "send_to" => dest, 
-	"v" => 1.1 }
+        "v" => 1.1 }
 
       req = Net::HTTP::Post.new(@post_ws,
         initheader = "Content-type" => "application/x-www-form-urlencoded",
-	"Accept" => "text/plain")
+        "Accept" => "text/plain")
       req.basic_auth @user, @pass
       req.body = @payload
       response = Net::HTTP.new(@host, @port).start { |http| http.request(req) }
