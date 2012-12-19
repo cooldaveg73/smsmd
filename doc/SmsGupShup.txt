@@ -1,20 +1,31 @@
 A guide for dealing with SMS Gup Shup
 
-MH sets a response url for a dedicated keyword group longcode. However, the only settings you can edit are for specified keyword groups.
+MH sets a response url for a dedicated keyword group longcode. However, the
+only settings you can edit are for specified keyword groups.
 
-A longcode is just the 10 digit system number.
-It is dedictated because every text that comes into the system should go to one url. Enterprise SMS Gup Shup is configured for users to set up their framework on their site.
-A keyword group just means that certain letters tag to a certain URL. (Basically everything that our app does REQ FIN ACC, etc).
+A longcode is just the 10 digit system number.  It is dedictated because every
+text that comes into the system should go to one url. Enterprise SMS Gup Shup
+is configured for users to set up their framework on their site.  A keyword
+group just means that certain letters tag to a certain URL. (Basically
+everything that our app does REQ FIN ACC, etc).
 
-There is no point in making a keyword group because we want it to be dedicated. And their enterprise suite does not allow users to make dedicated longcodes.
+There is no point in making a keyword group because we want it to be dedicated.
+And their enterprise suite does not allow users to make dedicated longcodes.
 
-THING TO REMEMBER: in order to edit settings for the dedicated keyword group, you have to email SMS Gup Shup. You have to tell them something like: we want every text to <system number> to go to <this url> i.e. app.mobilizinghealth.org/healthbeta/sms/.
+THING TO REMEMBER: in order to edit settings for the dedicated keyword group,
+you have to email SMS Gup Shup. You have to tell them something like: we want
+every text to <system number> to go to <this url> i.e.
+app.mobilizinghealth.org/healthbeta/sms/.
 
-Our contacts right now are:
-Chris D’mello <chris@webaroo.com>
-Ketan Patel <ketan@webaroo.com>
+Our contacts right now are: 
+Chris D’mello <chris@webaroo.com> 
+Ketan Patel <ketan@webaroo.com> 
 Nilesh Trivedi <nilesh@webaroo.com>
 
-The only other setting to edit (which we can actually edit) on the enterprise site is how it sets the delivery status of the message. On the current app, this info is stored in the messages controller under delivery status. On the site, you set this under the settings when you log into enterprise.smsgupshup.com.
+The only other setting to edit (which we can actually edit) on the enterprise
+site is how it sets the delivery status of the message. On the current app,
+this info is stored in the messages controller under delivery status. On the
+site, you set this under the settings when you log into
+enterprise.smsgupshup.com.
 
 Always email them if you have questions. They are responsive.
