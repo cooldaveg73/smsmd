@@ -5,7 +5,7 @@ This file includes information that describe the Mobilizing Health application,
 its framework, API, and usage as an application. For any operations advice, see
 the sister document OPERATIONS_OVERVIEW.txt
 
-The main point of entry into the applicaiton is the messages controller. All
+The main point of entry into the application is the messages controller. All
 incoming messages go through this controller. Along with the cron.rb file in
 the script directory, all of the application logic sits here. The main
 controller method is called sms_responder. Most all of the private methods in
