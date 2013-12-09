@@ -1,5 +1,6 @@
 class CasesController < ApplicationController
 
+  # A method that displays all of the messages for a project organized by time
   def report
     project = get_project_and_set_subtitle
     current_page = params[:page].to_i
@@ -13,10 +14,11 @@ class CasesController < ApplicationController
     render :layout => "sortable_table"
   end
 
+  # Displays all the messages for a given case
   def cases
     kase = Case.find_by_id(params[:id].to_i)
-    redirect_to( root_path ) if kase.nil?
-    authorize_project(kase.project)
+    redirect_to(root_path) && return if kase.nil?
+    return unless authorize_project(kase.project)
     @messages = kase.messages.order("id DESC")
     @timezone = +5.5
     @title = "Case #{kase.id} Summary"
@@ -24,6 +26,8 @@ class CasesController < ApplicationController
     render :layout => "sortable_table"
   end
 
+  # Displays the home page of the application which shows all of the most
+  # recent cases
   def main
     project = get_project_and_set_subtitle
     authorize_project(project)
@@ -36,6 +40,8 @@ class CasesController < ApplicationController
     @title = "Cases Summary"
   end
 
+  # an ajax call available for incoming REQ messages. the online user can use
+  # this front-end tool to mark a message as fake
   def mark_fake
     kase = Case.find_by_id(params[:case][:id])
     kase.update_attributes( :fake => !kase.fake )

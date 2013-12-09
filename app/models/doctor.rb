@@ -38,8 +38,6 @@ class Doctor < ActiveRecord::Base
   validates :mobile, 		:length => { :maximum => 20 }, :presence => true
   validates :status, 		:length => { :maximum => 24 },
                             :inclusion => { :in => DOCTOR_STATI }
-  # TODO: think more about this validation
-  # validates :project,		:presence => true
   validates :specialty, 	:length => { :maximum => 20 }
   validates :last_paged,	:presence => true
 

@@ -40,6 +40,7 @@ class Project < ActiveRecord::Base
   			:source => :person, :source_type => "Pm"
   has_many :users,	:through => :memberships,
   			:source => :person, :source_type => "User"
+  has_one :promoter
 
   validates :name,	:presence => true,
 			:length => {:maximum => 35}

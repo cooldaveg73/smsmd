@@ -1,0 +1,12 @@
+<p>Notification: A promoter has requested a new project. Here is the info for this promoter.</p>
+
+<p>Name: <%= @promoter.name %><br />
+Organization: <%= @promoter.organization %><br />
+Industry: <%= @promoter.industry %><br />
+Country: <%= @promoter.country %><br />
+Email: <%= @promoter.email %><br />
+Username: <%= @promoter.username %></p>
+<br />
+
+<p> Please click the following link to create the user, the project, generate a temporary password for them, and grant them access to that project </p>
+<p><%= link_to "Grant access", "http://#{ActionMailer::Base.default_url_options[:host]}/new_project/grant?id=#{@promoter.id}" %></p>

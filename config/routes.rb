@@ -1,5 +1,13 @@
 Mh::Application.routes.draw do 
 
+  get "new_project/grant"
+  get "new_project/new"
+  post "new_project/create"
+  get "new_project/confirm_email"
+  get "new_project/setup0"
+  get "new_project/setup1"
+  get "new_project/setup2"
+
   match "/reporting", 	:to => "reporting#new"
   match "/datadive",    :to => "datadive#overview"
 

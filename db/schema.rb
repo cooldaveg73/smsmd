@@ -91,6 +91,14 @@ ActiveRecord::Schema.define(:version => 20120722202623) do
     t.datetime "updated_at"
   end
 
+  create_table "memberships", :force => true do |t|
+    t.string   "person_type"
+    t.integer  "person_id"
+    t.integer  "project_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "messages", :id => false, :force => true do |t|
     t.integer  "id",                                    :null => false
     t.integer  "incoming"
@@ -192,6 +200,20 @@ ActiveRecord::Schema.define(:version => 20120722202623) do
     t.boolean  "medgle_on",                                                           :default => false
   end
 
+  create_table "promoters", :force => true do |t|
+    t.string   "name",         :limit => 128
+    t.string   "organization", :limit => 32
+    t.string   "industry",     :limit => 32
+    t.string   "country",      :limit => 32
+    t.string   "website",      :limit => 1024
+    t.string   "email",        :limit => 128
+    t.string   "username",     :limit => 24
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "key",          :limit => 1024
+    t.integer  "project_id"
+  end
+
   create_table "shifts", :id => false, :force => true do |t|
     t.integer  "id",           :null => false
     t.integer  "start_hour"
@@ -213,6 +235,8 @@ ActiveRecord::Schema.define(:version => 20120722202623) do
     t.integer  "is_admin"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "email",           :limit => 256
+    t.integer  "new_project_id"
   end
 
   create_table "vhds", :id => false, :force => true do |t|

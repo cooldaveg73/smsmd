@@ -22,7 +22,7 @@
 #
 
 class Vhd < ActiveRecord::Base
-  VHD_STATI = %w(scribed vacant deactivated deleted)
+  VHD_STATI = %w(scribed vacant deactivated deleted medgling)
 
   belongs_to :project
   belongs_to :phc
@@ -45,6 +45,8 @@ class Vhd < ActiveRecord::Base
   validates :notes, 		:length => { :maximum => 1024 }
 
   def full_name; [first_name, last_name].join(" "); end;
+  def deactivate; self.status = VHD_STATI[2]; self.save; end;
+  def delete; self.status = VHD_STATI[3]; self.save; end;
 
   def name
     conditions = "first_name = ? AND project_id = ?"

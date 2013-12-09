@@ -10,8 +10,9 @@ class ApplicationController < ActionController::Base
     unless user.projects.include?(project)
       notice = "You cannot view data from that project"
       redirect_to "/logout", :notice => notice
-      return
+      return false
     end
+    return true
   end
   
   protected

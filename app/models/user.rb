@@ -9,6 +9,8 @@
 #  is_admin        :boolean(1)
 #  created_at      :datetime
 #  updated_at      :datetime
+#  email           :string(256)
+#  new_project_id  :integer(4)
 #
 
 require 'digest'
@@ -25,8 +27,9 @@ class User < ActiveRecord::Base
   has_one :doctor,		:dependent => :nullify
   has_one :vhd,			:dependent => :nullify
 
-  validates :name,		:presence => true,
-				:uniqueness => true
+  belongs_to :new_project,	:class_name => "Project"
+
+  validates :name,		:presence => true, :uniqueness => true
   validates :password, 		:confirmation => true
   validate :password_must_be_present
 

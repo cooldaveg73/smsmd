@@ -22,11 +22,20 @@ class SessionsController < ApplicationController
     end
   end
 
+  # if a user has access to multiple projects, then they can click what project
+  # they would like to view information for
   def pick_project
     user = User.find_by_id(session[:user_id])
     if user.projects.count == 1
       session[:project_id] = user.projects.first.id
-      redirect_to :controller => 'cases', :action => 'main' 
+      if user.new_project == user.projects.first
+        user.update_attributes(:new_project => nil)
+        redirect_to :controller => "new_project", :action => "setup1"
+        return
+      else
+        redirect_to :controller => "cases", :action => "main" 
+        return
+      end
     else
       @user = user
       @projects = user.projects
@@ -34,8 +43,16 @@ class SessionsController < ApplicationController
   end
 
   def project
+    user = User.find_by_id(session[:user_id])
     session[:project_id] = params[:project_id].to_i
-    redirect_to :controller => 'cases', :action => 'main' 
+    if user.new_project == Project.find_by_id(params[:project_id].to_i)
+      user.update_attributes(:new_project => nil)
+      redirect_to :controller => "new_project", :action => "setup1"
+      return
+    else
+      redirect_to :controller => "cases", :action => "main" 
+      return
+    end
   end
 
   def destroy

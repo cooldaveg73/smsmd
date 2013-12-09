@@ -4,6 +4,8 @@ class MessagesController < ApplicationController
   skip_before_filter :authorize,
     :only => [:sms_responder, :delivery_status, :send_sms]
 
+  # displays all of the messages into and out of the system based on the
+  # parameters of person id and person type
   def messages
     project = get_project_and_set_subtitle
     current_page = params[:page].to_i
@@ -18,6 +20,7 @@ class MessagesController < ApplicationController
       redirect_to :root
       return
     end
+    # figure out what messages belong to this person in the current project
     if person.respond_to?("project")
       authorize_project(person.project)
       # TODO: needs to return here otherwise makes a bug
@@ -47,6 +50,9 @@ class MessagesController < ApplicationController
     render :layout => "sortable_table"
   end
 
+  # a front-end tool for a project manager to send a message to a user
+  # the logic in this function tries to store as much data for this message as
+  # possible
   def send_sms
     dest = params[:dest] || ""
     message = params[:message] || ""
@@ -62,27 +68,33 @@ class MessagesController < ApplicationController
       vhd = Vhd.find_by_mobile(dest)
       unless vhd.nil?
         if Message.send_to_person(vhd, send_info).external_id.nil?
-	  sending_status = "Message could not be delivered to Gateway."
-	  sending_success = false
-	end
+          sending_status = "Message could not be delivered to Gateway."
+          sending_success = false
+        end
       else
-	doctor = Doctor.find_by_mobile(dest)
-	unless doctor.nil?
-	  if Message.send_to_person(doctor, send_info).external_id.nil?
-	    sending_status = "Message could not be delivered to Gateway."
-	    sending_success = false
-	  end
-	end
+        doctor = Doctor.find_by_mobile(dest)
+        unless doctor.nil?
+          if Message.send_to_person(doctor, send_info).external_id.nil?
+            sending_status = "Message could not be delivered to Gateway."
+            sending_success = false
+          end
+        end
       end
+      # TODO: clean up and fix this function, factor out functionality and send
+      # to other application users, i.e., pms
     end
     render :json => {:result => sending_status, :success => sending_success}
   end
 
+  # takes in and responds to any incoming sms. this function creates cases,
+  # pages doctors, responds to unknown numbers, and contains all of the other
+  # logic for the application
   def sms_responder
     source = params[:msisdn] || ""
     dest = params[:phonecode] || ""
     text = params[:content] || ""
     location = params[:location] || ""
+    # "91" is the country code for India
     if source[0...2] == "91" && source.length > 10
       source = source[2...source.length]
     end
@@ -90,15 +102,24 @@ class MessagesController < ApplicationController
       redirect_to URI.encode("/handle_demoer?mobile=#{source}&text=#{text}")
       return
     end
+    # save_info and send_info are instance variables that maintain information
+    # for the request when we go to save the incoming message or send a message
+    # back out. A message is saved as soon as all of the necessary save
+    # information is known, i.e., what case a message applies to. 
+    #
+    # send_info is a little more complicated because an incoming message can be
+    # responded_to in many different ways. The main idea is that most incoming
+    # requests respond to the user who sent that request in some way. send_info
+    # maintains information to send data back to that user
     @save_info, @send_info = {}, {}
     @save_info[:msg] = text[0...1024]
     @save_info[:to_number] = @send_info[:from_number] = dest
     @save_info[:from_number] = @send_info[:to_number] = source
     message_words = text.strip.split(/\s+/)
-    if(vhd = Vhd.find_by_mobile(source))
+    if (vhd = Vhd.find_by_mobile(source))
       [@save_info, @send_info].each { |h| h[:project] = vhd.project }
       handle_text_from_vhd(vhd, message_words)
-    elsif(doctor = Doctor.find_by_mobile(source))
+    elsif (doctor = Doctor.find_by_mobile(source))
       [@save_info, @send_info].each { |h| h[:project] = doctor.project }
       handle_text_from_doctor(doctor, message_words)
     else
@@ -133,6 +154,9 @@ class MessagesController < ApplicationController
 
   private
 
+    # makes a best guess at what project an unregistered user is associated
+    # with to use a custom message; otherwise, the system sends back a default
+    # unregistered message
     def handle_unregistered(location)
       if Project.where("mobile = ?", @save_info[:to_number]).count == 1
         project = Project.find_by_mobile(@save_info[:to_number])
@@ -149,26 +173,42 @@ class MessagesController < ApplicationController
     end
 
     def handle_text_from_vhd(vhd, message_words)
+      # the duplicate message check was a response to a bug that copied the
+      # same request from a VHD
       if duplicate_msg(vhd, @save_info[:msg])
         Message.save_from_person(vhd, @save_info)
       elsif vhd.status == "deleted"
-        # TODO: send an appropriate message
+        # TODO: send an appropriate and/or customized message
         Message.save_from_person(vhd, @save_info)
       elsif vhd.status == "deactivated"
-        # TODO: send an appropriate message
+        # TODO: send an appropriate and/or customized message
         Message.save_from_person(vhd, @save_info)
+      elsif vhd.status == "medgling"
+        handle_medgling_vhd(vhd)
       elsif vhd.is_patient
         handle_text_from_patient_vhd(vhd, message_words)
       elsif message_words[0].match(/req/i) && vhd.project.has_reqs
         handle_req(vhd, message_words)
       elsif message_words[0].match(/ans/i) && vhd.project.has_ans
         handle_ans(vhd, message_words)
-      else
+      else # no message format for vhds was recognized
         Message.save_from_person(vhd, @save_info)
 	    @send_info[:msg] = vhd.project.req_format_msg
 	    Message.send_to_person(vhd, @send_info)
         vhd.update_attributes(:status => "vacant")
       end
+    end
+
+    def handle_medgling_vhd(vhd)
+
+      forward_req_to_doctors(vhd, kase)
+    end
+
+    def vhd_error(vhd)
+      Message.save_from_person(vhd, @save_info)
+      @send_info[:msg] = vhd.project.req_format_msg
+      Message.send_to_person(vhd, @send_info)
+      vhd.update_attributes(:status => "vacant")
     end
 
     def handle_text_from_patient_vhd(vhd, message_words)
@@ -183,7 +223,8 @@ class MessagesController < ApplicationController
     end
 
     def handle_hlp(vhd, message_words)
-      # the <= 0 is because the decrementing happens after the fin
+      # the <= 0 check is here because the decrementing of buyer count happens
+      # after the fin
       if vhd.is_patient_buyer && vhd.buyer_count <= 0
         Message.save_from_person(vhd, @save_info)
 	    @send_info[:msg] = DEFAULT_NO_POINTS_MSG
@@ -212,14 +253,31 @@ class MessagesController < ApplicationController
 	    [@save_info, @send_info].each { |h| h[:case] = kase }
 	    Message.save_from_person(vhd, @save_info)
 	    Pm.notify("req", kase)
-	    doctors_to_page = vhd.project.get_doctors_to_page(kase)
-	    doctors_to_page.each { |d| d.page(kase) }
+        # NOTE: this logic forwards the req to doctors if medgle_on is false or
+        # if handle_req_medgle returns false
+        unless vhd.project.medgle_on || handle_req_medgle(vhd)
+          forward_req_to_doctors(vhd, kase)
+        end
       else
         Message.save_from_person(vhd, @save_info)
 	    @send_info[:msg] = vhd.project.req_format_msg
 	    Message.send_to_person(vhd, @send_info)
+        vhd.update_attributes(:status => "vacant")
       end
+    end
+
+    def forward_reqs_to_doctor(vhd, kase)
+      doctors_to_page = vhd.project.get_doctors_to_page(kase)
+      doctors_to_page.each { |d| d.page(kase) }
       vhd.update_attributes(:status => "vacant")
+    end
+
+    def handle_req_medgle(vhd)
+      message,  = Message.req_for_medgle(vhd, @save_info)
+      return false if message_for_vhd.nil?
+      Message.send_to_person(vhd, @send_info.merge(:msg => message_for_vhd))
+      vhd.update_attributes(:status => "medgling")
+      return true
     end
 
     ## TODO: Incomplete!!!!
@@ -248,6 +306,8 @@ class MessagesController < ApplicationController
       elsif doctor.status == "deactivated"
         # TODO: send an appropriate message
         Message.save_from_person(doctor, @save_info)
+      # an acc signals the system that a doctor wants to accept a case and
+      # provide a recommendation
       elsif message_words[0].match(/acc/i)
         if message_words[1].nil?
 	      handle_acc_without_letter(doctor)
@@ -255,10 +315,12 @@ class MessagesController < ApplicationController
 	      letter = message_words[1].first.upcase
 	      handle_acc_with_letter(doctor, letter)
 	    end
+      # a fin signals that the doctor has finished the case and provided a
+      # final recommendation
       elsif message_words[0].match(/fin/i)
         handle_fin(doctor, message_words)
-      # TODO: make work with VHD scribed
-      else
+      else # TODO: make work with VHD scribed see handle ans above; the current
+           # system just passes this message to the VHD
         unless doctor.current_case.nil?
 	      kase = doctor.current_case
 	      [@save_info, @send_info].each { |h| h[:case] = kase }
@@ -275,6 +337,10 @@ class MessagesController < ApplicationController
       end
     end
 
+    # an acc without a letter means that a doctor is not accepting a particular
+    # case. so the system will give the doctor the case that is available that
+    # the doctor was most recently paged for, see doctor.next_open_case for
+    # more detail.
     def handle_acc_without_letter(doctor)
       kase = doctor.next_open_case
       unless kase.nil?
@@ -288,6 +354,10 @@ class MessagesController < ApplicationController
       end
     end
 
+    # letters are associated with a particular case when a doctor is paged for
+    # a case. so when a doctor accepts a case with a particular letter, we give
+    # them the case associated with that letter. there is some logic here that
+    # specifies what to do if that case is not open or already closed, etc.
     def handle_acc_with_letter(doctor, letter)
       kase = doctor.case_on_letter(letter)
       unless kase.nil?
