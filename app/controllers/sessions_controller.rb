@@ -22,6 +22,8 @@ class SessionsController < ApplicationController
     end
   end
 
+  # if a user has access to multiple projects, then they can click what project
+  # they would like to view information for
   def pick_project
     user = User.find_by_id(session[:user_id])
     if user.projects.count == 1

@@ -3,6 +3,7 @@ class DemoController < ApplicationController
   include DemoHelper
   skip_before_filter :authorize, :only => :new
 
+  # handles any incoming message
   def new
     mobile = params[:mobile] || ""
     text = params[:text] || ""
@@ -10,14 +11,18 @@ class DemoController < ApplicationController
     demoer = Demoer.find_by_mobile(mobile)
     unless demoer.nil?
       if demoer.demoer_type == "doctor"
-	handle_doctor(demoer, text)
+        handle_doctor(demoer, text)
       elsif demoer.demoer_type == "vhd"
-	handle_vhd(demoer, text)
+        handle_vhd(demoer, text)
       end
     end
     render :nothing => true
   end
 
+  # front-end for the app for a PM to set up a demo
+  # all of the numbers must be registered and specified for the system to run a
+  # demo as in, users must be registered at this step before the system accepts
+  # messages from them
   def setup
     @project = get_project_and_set_subtitle
     @receivers = Demoer.where("demoer_type = ?", "receiver")
@@ -36,6 +41,7 @@ class DemoController < ApplicationController
     @title = "Demo"
   end
 
+  # creates and sends messages to doctors
   def submit_doctors
     Demoer.where("demoer_type = ?", "doctor").destroy_all
     project = get_project_and_set_subtitle
@@ -61,6 +67,8 @@ class DemoController < ApplicationController
     redirect_to "/demo"
   end
 
+  # creates VHDs. after this function, the system expects VHDs to submit in a
+  # REQ
   def submit_vhds
     Demoer.where("demoer_type = ?", "vhd").destroy_all
     project = get_project_and_set_subtitle
@@ -85,6 +93,9 @@ class DemoController < ApplicationController
     redirect_to "/demo"
   end
 
+  # a receiver is a mock PM. they will be copied on appropriate new case
+  # requests and doctor actions, as in new case requests and doctor actions
+  # from the same demo
   def submit_receivers
     Demoer.where("demoer_type = ?", "receiver").destroy_all
     project = get_project_and_set_subtitle

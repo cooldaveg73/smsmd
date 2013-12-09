@@ -1,6 +1,92 @@
-Use this README file to introduce your application and point to useful places in the API for learning more.
-Run "rake doc:app" to generate API documentation for your models, controllers, helpers, and libraries.
+Use this README file to introduce your application and point to useful places
+in the API for learning more.
 
+This file includes information that describe the Mobilizing Health application,
+its framework, API, and usage as an application. For any operations advice, see
+the sister document OPERATIONS_OVERVIEW.txt
+
+The main point of entry into the applicaiton is the messages controller. All
+incoming messages go through this controller. Along with the cron.rb file in
+the script directory, all of the application logic sits here. The main
+controller method is called sms_responder. Most all of the private methods in
+that controller are path methods from the sms_responder.  This is by far the
+most complicated piece of the code. Most of the other code implements a side
+feature of the application or displays information through the web.
+
+The cases controller controls the home page of the site and the reporting page.
+The idea with the cases controller is to query and display information.
+
+The datadive controller was part of a hackathon. The idea was the display the
+most frequent symptoms on a dynamically generated bar-graph. 
+
+The demo controller specifies the operation of a demo. This controller operates
+closely with a demoer model. The choice of separating out this code was to
+hopefully not interfere with the rest of the application. The demo uses
+simplified aspects of the program to operate. Demo data is cleared by the cron
+after a few hours because it is temporary and is being used for nothing else.
+Code that is used between the demo controller and messages controller is
+recycled into the messages helper.
+
+The followup controller specifies the system by which a project manager can followup with patients and get feedback from the system.
+
+The new project controller provides the setup for a new project. This
+controller sets up all the forms necessary to create a new project and handles
+all the user errors in setup.
+
+The project controller allows a project manager to edit settings for their
+project. Right now, a PM can activate, deactivate, delete, and add doctors and
+VHDs. Someone can also set up a new project with new users through the
+application. This controller tries to replicate a lot of front-end code related
+to manipulating VHDs and doctors. So each of the create, destroy, update,
+deactivate functions use parameters to determine whether or not a doctor or vhd
+is being manipulated. Most of the error handling in this controller is just a
+status message that says whether or not you were successful. Destroying keeps
+the model in the system. Other developers recommend maintaining old data
+"in-place". By this, I mean that in order to see who messages are from, I use a
+vhd_id field and then query the Vhd table. The other way would be to store that
+information directly into the message field so we could expunge vhd's out of
+the database.
+
+The reporting controller displays data related to the project. The reporting
+page is basically a series of queries. One important thing to note is that
+queries are set up in conjunction. See the section below for why I justify that
+action. A lot of the code here was factored into the helper for readability.
+
+The sessions controller and users controller are very similar to the Rails
+scaffolds for sessions and users.
+
+Here is a definition of each model.
+- case: a conversation between a doctor and a VHD. A case_id is used to store
+  all the messages related to that case.
+- apm: assistant project manager. this is meant to be a project manager with
+  less privileges and less access to the system. The PM can control what
+  notifications an APM receives and what an APM can see online.
+- district -> block -> panchayats -> villages: regional distinctions in India.
+  can be useful for organizing project information if the system becomes large.
+- code: the system allows for doctors to use certain abbreviations. the code
+  model expands these abbreviates for doctor messages.
+- doctor: can be paged for messages, respond to cases, and send in
+  recommendations. the doctor model contains a lot of code that figures out
+  what case a doctor is associated with based on letter (for an ACC message)
+  and figures out what acc options are available.
+- hospital: a hospital would be associated with a village. an unimplemented
+  feature was to replace a doctor's text that said "visit the nearest hospital"
+  with the actual information for that hospital provided in this model
+- joins/membership: defines project membership for various users
+- joins/paging_record: stores the type of paging_scheme that was used for a
+  given case
+- paging_scheme: specifies how a doctor is paged. right now, the current system
+  uses priority to page certain doctors
+- patient: the key thing to understand is the difference between a patient and
+  a VHD. the difference is that a patient does not send in messages to the
+  system. a VHD sends in messages for the patient. since the VHD will provide
+  the name of the patient, we can aggregate the patient data. in the messages
+  controller, old patient_id
+- promoter: the person signing up for a new project; usually will eventually
+  become the project manager
+- shift: specifies when a doctor is available
+- pm: project manager that uses the web app to coordinated and customize
+  project behavior
 
 =======================================
 The following lines describe aspects of my coding style that might be useful in

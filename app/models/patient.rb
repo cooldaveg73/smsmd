@@ -33,8 +33,10 @@ class Patient < ActiveRecord::Base
 
   def age_string
     return (age.to_s + "y") unless age.nil?
+    # meta_age specifies type of patient: old person, child, adult, etc.
     return meta_age unless meta_age.nil?
-    # TODO
+    # TODO: send some kind of notification if a patient does not have an age or
+    # a meta_age: can this occur?
     return ""
   end
 

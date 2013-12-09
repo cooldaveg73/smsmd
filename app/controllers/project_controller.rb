@@ -1,5 +1,6 @@
 class ProjectController < ApplicationController
 
+  # top level page for this controller; a view that allows the user to call into other parts of this controller
   def settings
     project = Project.find_by_id(session[:project_id])
     user = User.find_by_id(session[:user_id])
@@ -15,6 +16,10 @@ class ProjectController < ApplicationController
     @is_admin = user.is_admin || false
   end
 
+  # deletes a doctor or VHD. Deleting here really just means that the project
+  # manager will no longer see them. Their information persists in the system
+  # for data collection and so that viewing old data through the application
+  # maintains that information.
   def destroy
     get_title
     id = params[:id].to_i
@@ -43,6 +48,8 @@ class ProjectController < ApplicationController
     redirect_to :action => :settings, :message => @message
   end
 
+  # sets a user's status to "active"; this affects the behavior in other parts
+  # of the application
   def activate
     get_title
     id = params[:id].to_i
@@ -79,6 +86,11 @@ class ProjectController < ApplicationController
     redirect_to :action => :settings, :message => @message
   end
 
+  # a user can be deactivated for a period of time by the project manager. the
+  # project manager might do this if a doctor is on vacation or a VHD is
+  # sending in inappropriate messages. The project manager can reactivate them
+  # at any time by clicking activate. The difference between deactivate and
+  # destroy is that the project manager can still look at the user.
   def deactivate
     get_title
     id = params[:id].to_i
@@ -233,27 +245,6 @@ class ProjectController < ApplicationController
     @patient_buyers = project.vhds.where("is_patient_buyer = ? AND status != ?", true, "deleted")
     user = User.find_by_id(session[:user_id])
     @is_admin = user.is_admin || false
-  end
-
-
-  def doctor_demo
-    @title = "Doctor Demo"
-    @subtitle = "Please do not use existing doctors for a demo"
-    Doctor.reset_doctor_demo
-    @req_msg = "Reply ACC A to accept case: HLP Gara Meena 45y 9828390430 High fever and seizures since 4 hours" 
-  end
-
-  def page_doctors
-    # BUG: doctor_demo information persists
-    @req_msg = "Reply ACC A to accept case: HLP Gara Meena 45y 9828390430 High fever and seizures since 4 hours" 
-    Doctor.add_doctor_for_demo(params[:doctor_1])
-    Doctor.add_doctor_for_demo(params[:doctor_2])
-    Doctor.add_doctor_for_demo(params[:doctor_3])
-    Doctor.add_doctor_for_demo(params[:doctor_4])
-    Doctor.get_demo_doctors.each do |mobile|
-      Message.send(mobile, @req_msg)
-    end
-    render "doctor_demo"
   end
 
   private

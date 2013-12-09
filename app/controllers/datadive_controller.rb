@@ -1,5 +1,9 @@
 class DatadiveController < ApplicationController
 
+  # This controller was a project as part of a hackathon. The code was written
+  # by a participant at the hackathon and has not been maintained or touched
+  # by any Mobilizing Health affiliate
+
   def ignored_words
     %w(1 2 3 4 5 6 7 8 9 10 acc and to me days at for bd tds od qid stat sos ac pc)
   end
