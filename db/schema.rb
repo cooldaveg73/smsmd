@@ -228,7 +228,7 @@ ActiveRecord::Schema.define(:version => 20120722202623) do
   end
 
   create_table "users", :id => false, :force => true do |t|
-    t.integer  "id",                             :null => false
+    t.integer  "id",              :null => false
     t.string   "name"
     t.string   "hashed_password"
     t.string   "salt"

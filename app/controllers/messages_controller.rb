@@ -68,18 +68,20 @@ class MessagesController < ApplicationController
       vhd = Vhd.find_by_mobile(dest)
       unless vhd.nil?
         if Message.send_to_person(vhd, send_info).external_id.nil?
-	  sending_status = "Message could not be delivered to Gateway."
-	  sending_success = false
-	end
+          sending_status = "Message could not be delivered to Gateway."
+          sending_success = false
+        end
       else
-	doctor = Doctor.find_by_mobile(dest)
-	unless doctor.nil?
-	  if Message.send_to_person(doctor, send_info).external_id.nil?
-	    sending_status = "Message could not be delivered to Gateway."
-	    sending_success = false
-	  end
-	end
+        doctor = Doctor.find_by_mobile(dest)
+        unless doctor.nil?
+          if Message.send_to_person(doctor, send_info).external_id.nil?
+            sending_status = "Message could not be delivered to Gateway."
+            sending_success = false
+          end
+        end
       end
+      # TODO: clean up and fix this function, factor out functionality and send
+      # to other application users, i.e., pms
     end
     render :json => {:result => sending_status, :success => sending_success}
   end
@@ -114,10 +116,10 @@ class MessagesController < ApplicationController
     @save_info[:to_number] = @send_info[:from_number] = dest
     @save_info[:from_number] = @send_info[:to_number] = source
     message_words = text.strip.split(/\s+/)
-    if(vhd = Vhd.find_by_mobile(source))
+    if (vhd = Vhd.find_by_mobile(source))
       [@save_info, @send_info].each { |h| h[:project] = vhd.project }
       handle_text_from_vhd(vhd, message_words)
-    elsif(doctor = Doctor.find_by_mobile(source))
+    elsif (doctor = Doctor.find_by_mobile(source))
       [@save_info, @send_info].each { |h| h[:project] = doctor.project }
       handle_text_from_doctor(doctor, message_words)
     else
@@ -181,6 +183,8 @@ class MessagesController < ApplicationController
       elsif vhd.status == "deactivated"
         # TODO: send an appropriate and/or customized message
         Message.save_from_person(vhd, @save_info)
+      elsif vhd.status == "medgling"
+        handle_medgling_vhd(vhd)
       elsif vhd.is_patient
         handle_text_from_patient_vhd(vhd, message_words)
       elsif message_words[0].match(/req/i) && vhd.project.has_reqs
@@ -193,6 +197,18 @@ class MessagesController < ApplicationController
 	    Message.send_to_person(vhd, @send_info)
         vhd.update_attributes(:status => "vacant")
       end
+    end
+
+    def handle_medgling_vhd(vhd)
+
+      forward_req_to_doctors(vhd, kase)
+    end
+
+    def vhd_error(vhd)
+      Message.save_from_person(vhd, @save_info)
+      @send_info[:msg] = vhd.project.req_format_msg
+      Message.send_to_person(vhd, @send_info)
+      vhd.update_attributes(:status => "vacant")
     end
 
     def handle_text_from_patient_vhd(vhd, message_words)
@@ -237,19 +253,34 @@ class MessagesController < ApplicationController
 	    [@save_info, @send_info].each { |h| h[:case] = kase }
 	    Message.save_from_person(vhd, @save_info)
 	    Pm.notify("req", kase)
-	    doctors_to_page = vhd.project.get_doctors_to_page(kase)
-	    doctors_to_page.each { |d| d.page(kase) }
+        # NOTE: this logic forwards the req to doctors if medgle_on is false or
+        # if handle_req_medgle returns false
+        unless vhd.project.medgle_on || handle_req_medgle(vhd)
+          forward_req_to_doctors(vhd, kase)
+        end
       else
         Message.save_from_person(vhd, @save_info)
 	    @send_info[:msg] = vhd.project.req_format_msg
 	    Message.send_to_person(vhd, @send_info)
+        vhd.update_attributes(:status => "vacant")
       end
+    end
+
+    def forward_reqs_to_doctor(vhd, kase)
+      doctors_to_page = vhd.project.get_doctors_to_page(kase)
+      doctors_to_page.each { |d| d.page(kase) }
       vhd.update_attributes(:status => "vacant")
     end
 
-    ## TODO: hammer out the details of ans conversation. an ans conversation
-    #would allow a vhd and doctor to continue communication after a case has
-    #begun. typically a doctor and vhd will talk over the phone
+    def handle_req_medgle(vhd)
+      message,  = Message.req_for_medgle(vhd, @save_info)
+      return false if message_for_vhd.nil?
+      Message.send_to_person(vhd, @send_info.merge(:msg => message_for_vhd))
+      vhd.update_attributes(:status => "medgling")
+      return true
+    end
+
+    ## TODO: Incomplete!!!!
     def handle_ans(vhd, message_words)
       Message.save_from_person(@save_info)
   #    if vhd.status == "scribed" # vhd's status is scribed
